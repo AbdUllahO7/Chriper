@@ -1,7 +1,11 @@
+export type UserRole = 'admin' | 'receptionist' | 'chiropractor';
+
 export interface User {
     id: number;
     name: string;
     email: string;
+    role: UserRole;
+    permissions: string[];
     email_verified_at?: string;
 }
 

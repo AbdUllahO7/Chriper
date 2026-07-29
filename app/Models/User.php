@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'role'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -28,5 +28,54 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isReceptionist(): bool
+    {
+        return $this->role === 'receptionist';
+    }
+
+    public function isChiropractor(): bool
+    {
+        return $this->role === 'chiropractor';
+    }
+
+    /**
+     * Get permissions array based on role.
+     *
+     * @return array<string>
+     */
+    public function getPermissionsAttribute(): array
+    {
+        return match ($this->role) {
+            'admin' => [
+                'users.manage',
+                'users.create',
+                'users.roles',
+                'patients.view',
+                'patients.manage',
+                'treatments.view',
+                'treatments.manage',
+                'reports.view',
+            ],
+            'chiropractor' => [
+                'patients.view',
+                'treatments.view',
+                'treatments.manage',
+                'clinical_notes.write',
+            ],
+            'receptionist' => [
+                'patients.view',
+                'patients.manage',
+                'appointments.schedule',
+                'appointments.cancel',
+            ],
+            default => ['patients.view'],
+        };
     }
 }

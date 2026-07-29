@@ -27,7 +27,7 @@ export default function Authenticated({
                                 </Link>
                             </div>
 
-                            <div className="hidden space-x-4 sm:flex items-center">
+                            <div className="hidden space-x-3 sm:flex items-center">
                                 <Link
                                     href={route('dashboard')}
                                     className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
@@ -38,6 +38,19 @@ export default function Authenticated({
                                 >
                                     Dashboard
                                 </Link>
+
+                                {user.role === 'admin' && (
+                                    <Link
+                                        href={route('admin.users.index')}
+                                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                                            route().current('admin.users.*')
+                                                ? 'bg-purple-600/20 text-purple-300 border border-purple-500/30'
+                                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        }`}
+                                    >
+                                        User Management
+                                    </Link>
+                                )}
                             </div>
                         </div>
 
@@ -53,7 +66,13 @@ export default function Authenticated({
                                                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-xs text-white">
                                                     {user.name.charAt(0).toUpperCase()}
                                                 </div>
-                                                <span>{user.name}</span>
+                                                <div className="text-left">
+                                                    <span className="block font-semibold text-xs text-white">{user.name}</span>
+                                                    <span className="block text-[10px] uppercase font-bold text-purple-400 tracking-wider">
+                                                        {user.role}
+                                                    </span>
+                                                </div>
+
 
                                                 <svg
                                                     className="-me-0.5 ms-1 h-4 w-4 text-gray-400"
