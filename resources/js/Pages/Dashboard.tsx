@@ -1,64 +1,73 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AnalyticsChart from '@/Components/Dashboard/AnalyticsChart';
 import { Head, usePage } from '@inertiajs/react';
-import { useState } from 'react';
 
-export default function Dashboard() {
+interface MetricCard {
+    title: string;
+    value: string;
+    change: string;
+    trend: 'up' | 'down' | 'warning';
+    description: string;
+}
+
+interface DashboardProps {
+    cards: {
+        todaysAppointments: MetricCard;
+        activePatients: MetricCard;
+        totalPatients: MetricCard;
+        monthlyRevenue: MetricCard;
+        pendingPayments: MetricCard;
+    };
+    weeklyAppointments: { labels: string[]; datasets: any[] };
+    monthlyIncome: { labels: string[]; datasets: any[] };
+    newPatients: { labels: string[]; datasets: any[] };
+}
+
+export default function Dashboard({
+    cards,
+    weeklyAppointments,
+    monthlyIncome,
+    newPatients,
+}: DashboardProps) {
     const user = usePage().props.auth.user;
 
-    const [message, setMessage] = useState('');
-    const [chirps, setChirps] = useState([
-        {
-            id: 1,
-            user: 'Sara Jenkins',
-            handle: '@sara_j',
-            time: '20m ago',
-            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-            content: 'Just updated our clinic intake flow! Check-ins are 50% faster now.',
-            likes: 18,
-            liked: false,
-            reposts: 5,
-        },
-        {
-            id: 2,
-            user: 'Dr. Marcus Wright',
-            handle: '@marcus_chiro',
-            time: '1h ago',
-            avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-            content: 'Completed spinal adjustment sessions for today. Great patient progress all around!',
-            likes: 42,
-            liked: true,
-            reposts: 12,
-        },
-    ]);
+    const renderMetricCard = (
+        card: MetricCard,
+        iconSvg: React.ReactNode,
+        accentColorClass: string,
+        glowClass: string
+    ) => {
+        return (
+            <div className="glass-card rounded-3xl p-6 border border-white/10 shadow-xl hover:border-purple-500/30 transition-all flex flex-col justify-between group">
+                <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                        {card.title}
+                    </span>
+                    <div
+                        className={`w-10 h-10 rounded-2xl flex items-center justify-center border transition-transform group-hover:scale-110 ${accentColorClass} ${glowClass}`}
+                    >
+                        {iconSvg}
+                    </div>
+                </div>
 
-    const handlePostChirp = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!message.trim()) return;
-
-        setChirps([
-            {
-                id: Date.now(),
-                user: user.name,
-                handle: `@${user.name.toLowerCase().replace(/\s+/g, '')}`,
-                time: 'Just now',
-                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=8b5cf6&color=fff`,
-                content: message,
-                likes: 0,
-                liked: false,
-                reposts: 0,
-            },
-            ...chirps,
-        ]);
-        setMessage('');
-    };
-
-    const toggleLike = (id: number) => {
-        setChirps(
-            chirps.map((c) =>
-                c.id === id
-                    ? { ...c, liked: !c.liked, likes: c.liked ? c.likes - 1 : c.likes + 1 }
-                    : c
-            )
+                <div className="mt-1">
+                    <div className="flex items-baseline justify-between">
+                        <span className="text-3xl font-extrabold text-white tracking-tight">
+                            {card.value}
+                        </span>
+                        <span
+                            className={`text-xs font-bold px-2.5 py-1 rounded-full border ${
+                                card.trend === 'warning'
+                                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                                    : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                            }`}
+                        >
+                            {card.change}
+                        </span>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">{card.description}</p>
+                </div>
+            </div>
         );
     };
 
@@ -69,227 +78,189 @@ export default function Dashboard() {
                     <div>
                         <div className="flex items-center gap-3 mb-1">
                             <h1 className="text-3xl font-extrabold text-white tracking-tight">
-                                Welcome back, <span className="gradient-text">{user.name}</span>
+                                Clinic <span className="gradient-text">Dashboard</span>
                             </h1>
                             <span className="px-3 py-1 text-xs font-extrabold uppercase rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
                                 {user.role}
                             </span>
                         </div>
                         <p className="text-sm text-gray-400">
-                            Role-Scoped Workspace • Granted Permissions: <span className="text-purple-300 font-mono text-xs">{user.permissions.length} active</span>
+                            Real-time metrics for appointments, patient growth, and financial revenue.
                         </p>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <button className="px-4 py-2.5 rounded-xl glass-card text-xs font-semibold text-gray-300 hover:text-white border border-white/10 transition-colors">
+                            Export Report
+                        </button>
+                        <button className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-xs hover:from-purple-500 hover:to-indigo-500 shadow-lg shadow-purple-600/25 transition-all">
+                            + Book Appointment
+                        </button>
                     </div>
                 </div>
             }
         >
-            <Head title="Dashboard Feed" />
+            <Head title="Clinic Dashboard" />
 
-            {/* Role Scoped Header Widgets */}
-            {user.role === 'admin' && (
-                <div className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    <div className="glass-card rounded-2xl p-6 border border-purple-500/30 bg-purple-900/10">
-                        <span className="text-xs font-bold uppercase text-purple-400 tracking-wider">Role Power</span>
-                        <h3 className="text-xl font-bold text-white mt-1">System Administrator</h3>
-                        <p className="text-xs text-gray-400 mt-1">Full access to User Management, Role Assignments, and Audit Logs.</p>
-                    </div>
-                    <div className="glass-card rounded-2xl p-6 border border-blue-500/30 bg-blue-900/10">
-                        <span className="text-xs font-bold uppercase text-blue-400 tracking-wider">Active Staff</span>
-                        <h3 className="text-xl font-bold text-white mt-1">3 Active Roles</h3>
-                        <p className="text-xs text-gray-400 mt-1">Admin, Receptionist, Chiropractor roles configured.</p>
-                    </div>
-                    <div className="glass-card rounded-2xl p-6 border border-emerald-500/30 bg-emerald-900/10">
-                        <span className="text-xs font-bold uppercase text-emerald-400 tracking-wider">Security</span>
-                        <h3 className="text-xl font-bold text-white mt-1">RBAC Active</h3>
-                        <p className="text-xs text-gray-400 mt-1">Middlewares & Inertia Shared Props enforcing access control.</p>
-                    </div>
+            {/* Step 3 — 5 KPI Dashboard Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
+                {/* 1. Today's Appointments */}
+                {renderMetricCard(
+                    cards.todaysAppointments,
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>,
+                    'bg-purple-500/10 text-purple-400 border-purple-500/20',
+                    'shadow-purple-500/10'
+                )}
+
+                {/* 2. Active Patients */}
+                {renderMetricCard(
+                    cards.activePatients,
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>,
+                    'bg-blue-500/10 text-blue-400 border-blue-500/20',
+                    'shadow-blue-500/10'
+                )}
+
+                {/* 3. Total Patients */}
+                {renderMetricCard(
+                    cards.totalPatients,
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>,
+                    'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+                    'shadow-indigo-500/10'
+                )}
+
+                {/* 4. Monthly Revenue */}
+                {renderMetricCard(
+                    cards.monthlyRevenue,
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>,
+                    'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+                    'shadow-emerald-500/10'
+                )}
+
+                {/* 5. Pending Payments */}
+                {renderMetricCard(
+                    cards.pendingPayments,
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>,
+                    'bg-amber-500/10 text-amber-400 border-amber-500/20',
+                    'shadow-amber-500/10'
+                )}
+            </div>
+
+            {/* Step 3 — Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                {/* 1. Weekly Appointments (Bar Chart) */}
+                <div className="lg:col-span-1 h-[340px]">
+                    <AnalyticsChart
+                        type="bar"
+                        data={weeklyAppointments}
+                        title="Weekly Appointments"
+                        subtitle="Completed vs Scheduled (Mon – Sun)"
+                    />
                 </div>
-            )}
 
-            {user.role === 'receptionist' && (
-                <div className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    <div className="glass-card rounded-2xl p-6 border border-blue-500/30 bg-blue-900/10">
-                        <span className="text-xs font-bold uppercase text-blue-400 tracking-wider">Front Desk</span>
-                        <h3 className="text-xl font-bold text-white mt-1">Patient Check-In Queue</h3>
-                        <p className="text-xs text-gray-400 mt-1">8 patients scheduled for today's intake.</p>
-                    </div>
-                    <div className="glass-card rounded-2xl p-6 border border-indigo-500/30 bg-indigo-900/10">
-                        <span className="text-xs font-bold uppercase text-indigo-400 tracking-wider">Appointments</span>
-                        <h3 className="text-xl font-bold text-white mt-1">Scheduling Active</h3>
-                        <p className="text-xs text-gray-400 mt-1">Book or reschedule chiropractic sessions.</p>
-                    </div>
-                    <div className="glass-card rounded-2xl p-6 border border-purple-500/30 bg-purple-900/10">
-                        <span className="text-xs font-bold uppercase text-purple-400 tracking-wider">Status</span>
-                        <h3 className="text-xl font-bold text-white mt-1">Reception Desk Open</h3>
-                        <p className="text-xs text-gray-400 mt-1">Ready for incoming patient registrations.</p>
-                    </div>
+                {/* 2. Monthly Income (Area Line Chart) */}
+                <div className="lg:col-span-1 h-[340px]">
+                    <AnalyticsChart
+                        type="line"
+                        data={monthlyIncome}
+                        title="Monthly Income"
+                        subtitle="Revenue vs Target ($USD)"
+                    />
                 </div>
-            )}
 
-            {user.role === 'chiropractor' && (
-                <div className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    <div className="glass-card rounded-2xl p-6 border border-emerald-500/30 bg-emerald-900/10">
-                        <span className="text-xs font-bold uppercase text-emerald-400 tracking-wider">Clinical Care</span>
-                        <h3 className="text-xl font-bold text-white mt-1">Chiropractic Treatments</h3>
-                        <p className="text-xs text-gray-400 mt-1">Spinal adjustments, therapy sessions, and rehab plans.</p>
-                    </div>
-                    <div className="glass-card rounded-2xl p-6 border border-purple-500/30 bg-purple-900/10">
-                        <span className="text-xs font-bold uppercase text-purple-400 tracking-wider">Clinical Notes</span>
-                        <h3 className="text-xl font-bold text-white mt-1">Write SOAP Notes</h3>
-                        <p className="text-xs text-gray-400 mt-1">Record patient adjustments & medical progression.</p>
-                    </div>
-                    <div className="glass-card rounded-2xl p-6 border border-indigo-500/30 bg-indigo-900/10">
-                        <span className="text-xs font-bold uppercase text-indigo-400 tracking-wider">Today's Cases</span>
-                        <h3 className="text-xl font-bold text-white mt-1">5 Treatment Sessions</h3>
-                        <p className="text-xs text-gray-400 mt-1">Next session in 25 minutes.</p>
-                    </div>
+                {/* 3. New Patients (Line Chart) */}
+                <div className="lg:col-span-1 h-[340px]">
+                    <AnalyticsChart
+                        type="line"
+                        data={newPatients}
+                        title="New Patients Growth"
+                        subtitle="Monthly registrations (Jan – Jul)"
+                    />
                 </div>
-            )}
+            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Main Feed Column */}
-                <div className="lg:col-span-2 space-y-6">
-                    {/* Post Announcement / Chirp Box */}
-                    <div className="glass-card rounded-3xl p-6 shadow-xl border border-white/10">
-                        <form onSubmit={handlePostChirp} className="space-y-4">
-                            <div className="flex gap-4">
-                                <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-white shrink-0">
-                                    {user.name.charAt(0).toUpperCase()}
+            {/* Quick Actions & Recent Schedule Overview */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 glass-card rounded-3xl p-6 border border-white/10 shadow-2xl">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-base font-bold text-white">Today's Schedule Overview</h3>
+                        <span className="text-xs text-purple-400 font-mono">18 total appointments</span>
+                    </div>
+
+                    <div className="space-y-3">
+                        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-purple-500/20 text-purple-300 font-bold flex items-center justify-center text-sm">
+                                    09:00
                                 </div>
-                                <div className="flex-1">
-                                    <textarea
-                                        value={message}
-                                        onChange={(e) => setMessage(e.target.value)}
-                                        placeholder={`Share an update as ${user.role}...`}
-                                        rows={3}
-                                        className="w-full bg-[#0b0f19]/80 text-white rounded-2xl p-4 border border-white/10 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none resize-none transition-all placeholder:text-gray-500 text-sm"
-                                    />
+                                <div>
+                                    <span className="font-semibold text-white text-sm block">Robert Martinez</span>
+                                    <span className="text-xs text-gray-400">Spinal Adjustment & Decompression</span>
                                 </div>
                             </div>
-                            <div className="flex items-center justify-between pl-15">
-                                <div className="flex items-center gap-4 text-purple-400">
-                                    <span className="text-xs text-gray-500">{280 - message.length} chars</span>
-                                </div>
-                                <button
-                                    type="submit"
-                                    disabled={!message.trim()}
-                                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-sm hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-purple-600/25 active:scale-95"
-                                >
-                                    Post Announcement
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    {/* Timeline Feed List */}
-                    <div className="space-y-4">
-                        <div className="flex items-center justify-between px-2">
-                            <h2 className="text-lg font-bold text-white">Staff Updates & Announcements</h2>
-                            <span className="text-xs text-purple-400 font-medium bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20">
-                                Live Feed
+                            <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold">
+                                Completed
                             </span>
                         </div>
 
-                        {chirps.map((chirp) => (
-                            <div
-                                key={chirp.id}
-                                className="glass-card rounded-3xl p-6 border border-white/10 hover:border-purple-500/30 transition-all space-y-4"
-                            >
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <img
-                                            src={chirp.avatar}
-                                            alt={chirp.user}
-                                            className="w-11 h-11 rounded-full object-cover ring-2 ring-purple-500/30"
-                                        />
-                                        <div>
-                                            <span className="font-bold text-gray-100 text-sm block">
-                                                {chirp.user}
-                                            </span>
-                                            <span className="text-xs text-gray-400">{chirp.handle}</span>
-                                        </div>
-                                    </div>
-                                    <span className="text-xs text-gray-500">{chirp.time}</span>
+                        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-300 font-bold flex items-center justify-center text-sm">
+                                    10:30
                                 </div>
-
-                                <p className="text-gray-200 text-sm leading-relaxed">{chirp.content}</p>
-
-                                <div className="flex items-center gap-8 pt-2 text-xs text-gray-400 border-t border-white/5">
-                                    <button
-                                        onClick={() => toggleLike(chirp.id)}
-                                        className={`flex items-center gap-2 transition-colors ${
-                                            chirp.liked ? 'text-red-400 font-bold' : 'hover:text-red-400'
-                                        }`}
-                                    >
-                                        <svg
-                                            className="w-4 h-4"
-                                            fill={chirp.liked ? 'currentColor' : 'none'}
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                                            />
-                                        </svg>
-                                        <span>{chirp.likes} Likes</span>
-                                    </button>
-
-                                    <button className="flex items-center gap-2 hover:text-green-400 transition-colors">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                                            />
-                                        </svg>
-                                        <span>{chirp.reposts} Reposts</span>
-                                    </button>
+                                <div>
+                                    <span className="font-semibold text-white text-sm block">Emily Watson</span>
+                                    <span className="text-xs text-gray-400">Initial Chiropractic Consultation</span>
                                 </div>
                             </div>
-                        ))}
+                            <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold">
+                                In Progress
+                            </span>
+                        </div>
+
+                        <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-blue-500/20 text-blue-300 font-bold flex items-center justify-center text-sm">
+                                    14:00
+                                </div>
+                                <div>
+                                    <span className="font-semibold text-white text-sm block">Michael Chang</span>
+                                    <span className="text-xs text-gray-400">Postural Rehab & Physical Therapy</span>
+                                </div>
+                            </div>
+                            <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold">
+                                Scheduled
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                {/* Sidebar Permissions & Info */}
-                <div className="space-y-6">
-                    {/* Active Permissions Card */}
-                    <div className="glass-card rounded-3xl p-6 border border-white/10 space-y-4">
-                        <h3 className="text-base font-bold text-white flex items-center justify-between">
-                            <span>Your Permissions</span>
-                            <span className="text-xs text-purple-400 font-mono">{user.permissions.length} total</span>
-                        </h3>
-                        <div className="flex flex-wrap gap-2 pt-1">
-                            {user.permissions.map((perm) => (
-                                <span
-                                    key={perm}
-                                    className="px-3 py-1 rounded-xl bg-purple-500/10 text-purple-300 text-xs font-mono border border-purple-500/20"
-                                >
-                                    ✓ {perm}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
+                <div className="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl space-y-4">
+                    <h3 className="text-base font-bold text-white">Role Shortcuts</h3>
 
-                    {/* Quick Demo Switcher */}
-                    <div className="glass-card rounded-3xl p-6 border border-white/10 space-y-3">
-                        <h3 className="text-base font-bold text-white">Role Demo Accounts</h3>
-                        <p className="text-xs text-gray-400">Log out and test different roles using these credentials:</p>
-                        <div className="space-y-2 text-xs">
-                            <div className="p-3 rounded-xl bg-white/[0.03] border border-purple-500/20">
-                                <span className="font-bold text-purple-300 block">Admin</span>
-                                <span className="text-gray-400">admin@chirper.com / password</span>
-                            </div>
-                            <div className="p-3 rounded-xl bg-white/[0.03] border border-blue-500/20">
-                                <span className="font-bold text-blue-300 block">Receptionist</span>
-                                <span className="text-gray-400">receptionist@chirper.com / password</span>
-                            </div>
-                            <div className="p-3 rounded-xl bg-white/[0.03] border border-emerald-500/20">
-                                <span className="font-bold text-emerald-300 block">Chiropractor</span>
-                                <span className="text-gray-400">chiropractor@chirper.com / password</span>
-                            </div>
+                    <div className="space-y-3">
+                        <div className="p-4 rounded-2xl bg-white/[0.03] border border-purple-500/20">
+                            <span className="font-bold text-purple-300 text-sm block">🛡️ Admin Actions</span>
+                            <p className="text-xs text-gray-400 mt-1">Manage staff roles, inspect permissions & user logs.</p>
+                        </div>
+
+                        <div className="p-4 rounded-2xl bg-white/[0.03] border border-blue-500/20">
+                            <span className="font-bold text-blue-300 text-sm block">📋 Receptionist Desk</span>
+                            <p className="text-xs text-gray-400 mt-1">Process patient check-ins and collect pending payments.</p>
+                        </div>
+
+                        <div className="p-4 rounded-2xl bg-white/[0.03] border border-emerald-500/20">
+                            <span className="font-bold text-emerald-300 text-sm block">🩺 Chiropractor Suite</span>
+                            <p className="text-xs text-gray-400 mt-1">Access patient care plans, write clinical SOAP notes.</p>
                         </div>
                     </div>
                 </div>
