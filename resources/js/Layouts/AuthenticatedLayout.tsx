@@ -40,6 +40,17 @@ export default function Authenticated({
                                 </Link>
 
                                 <Link
+                                    href={route('appointments.index')}
+                                    className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                                        route().current('appointments.*')
+                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/30'
+                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    }`}
+                                >
+                                    Appointments
+                                </Link>
+
+                                <Link
                                     href={route('patients.index')}
                                     className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                                         route().current('patients.*')
@@ -60,6 +71,7 @@ export default function Authenticated({
                                 >
                                     Doctors
                                 </Link>
+
 
                                 {user.role === 'admin' && (
                                     <Link
