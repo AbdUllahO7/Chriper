@@ -54,16 +54,23 @@ class PatientController extends Controller
      */
     public function show(Patient $patient): Response
     {
-        $patient->load(['appointments' => function ($q) {
-            $q->with('chiropractor')->latest();
-        }, 'payments' => function ($q) {
-            $q->latest();
-        }]);
+        $patient->load([
+            'appointments' => function ($q) {
+                $q->with('chiropractor')->latest();
+            },
+            'medicalRecords' => function ($q) {
+                $q->with(['doctor', 'attachments'])->latest('record_date');
+            },
+            'payments' => function ($q) {
+                $q->latest();
+            },
+        ]);
 
         return Inertia::render('Patients/Show', [
             'patient' => $patient,
         ]);
     }
+
 
     /**
      * Store a newly created patient with profile photo upload.

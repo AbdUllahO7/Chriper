@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Appointment;
 use App\Models\Doctor;
+use App\Models\MedicalRecord;
+use App\Models\MedicalRecordAttachment;
 use App\Models\Patient;
 use App\Models\Payment;
 use App\Models\User;
@@ -70,28 +72,6 @@ class DatabaseSeeder extends Seeder
                 'is_available' => true,
                 'availability_status' => 'available',
             ],
-            [
-                'user_id' => null,
-                'name' => 'Dr. Elena Rostova',
-                'specialty' => 'Sports Injury & Neuromuscular Therapy',
-                'phone' => '555-0492',
-                'email' => 'elena.rostova@clinic.com',
-                'working_hours' => '10:00 AM - 06:00 PM',
-                'room_number' => 'Suite 108',
-                'is_available' => false,
-                'availability_status' => 'busy',
-            ],
-            [
-                'user_id' => null,
-                'name' => 'Dr. Jonathan Reed',
-                'specialty' => 'Vertebral Alignment & Biomechanics',
-                'phone' => '555-0781',
-                'email' => 'jreed@clinic.com',
-                'working_hours' => '07:30 AM - 03:30 PM',
-                'room_number' => 'Suite 212',
-                'is_available' => true,
-                'availability_status' => 'available',
-            ],
         ];
 
         $doctors = [];
@@ -104,9 +84,6 @@ class DatabaseSeeder extends Seeder
             ['first_name' => 'Robert', 'last_name' => 'Martinez', 'email' => 'robert.m@example.com', 'phone' => '555-0192', 'gender' => 'male', 'status' => 'active'],
             ['first_name' => 'Emily', 'last_name' => 'Watson', 'email' => 'emily.w@example.com', 'phone' => '555-0184', 'gender' => 'female', 'status' => 'active'],
             ['first_name' => 'Michael', 'last_name' => 'Chang', 'email' => 'mchang@example.com', 'phone' => '555-0211', 'gender' => 'male', 'status' => 'active'],
-            ['first_name' => 'Jessica', 'last_name' => 'Alba', 'email' => 'jessica.a@example.com', 'phone' => '555-0329', 'gender' => 'female', 'status' => 'active'],
-            ['first_name' => 'David', 'last_name' => 'Beckham', 'email' => 'david.b@example.com', 'phone' => '555-0482', 'gender' => 'male', 'status' => 'active'],
-            ['first_name' => 'Sophia', 'last_name' => 'Loren', 'email' => 'sophia.l@example.com', 'phone' => '555-0519', 'gender' => 'female', 'status' => 'active'],
         ];
 
         $createdPatients = [];
@@ -123,59 +100,59 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // 4. Seed Appointments across the current week with all 6 statuses
-        $statuses = ['scheduled', 'checked_in', 'in_progress', 'completed', 'cancelled', 'no_show'];
-        $services = ['Spinal Adjustment', 'Lumbar Decompression', 'Cervical Alignment', 'Physical Therapy', 'Postural Rehabilitation'];
-        $durations = [15, 30, 45, 60];
+        // 4. Seed Medical Records with 9 Clinical Sections & Attachments
+        $clinicalRecords = [
+            [
+                'patient_id' => $createdPatients[0]->id,
+                'doctor_id' => $doctors[0]->id,
+                'chief_complaint' => 'Acute lower lumbar spine pain radiating down right leg after lifting heavy cargo.',
+                'pain_level' => 8,
+                'medical_history' => 'L4-L5 lumbar strain in 2021. No previous spinal surgeries.',
+                'current_medications' => 'Ibuprofen 400mg PRN for inflammation.',
+                'allergies' => 'Penicillin (mild skin rash reaction).',
+                'physical_examination' => 'Palpation reveals severe paraspinal muscle spasm around L4-S1. Positive Straight Leg Raise test at 45 degrees on right side.',
+                'diagnosis' => 'L4-L5 Lumbar Disc Herniation with Right Sciatic Radiculopathy.',
+                'treatment_plan' => '3x weekly Spinal Decompression Therapy for 4 weeks. Core stabilization physical rehab.',
+                'progress_notes' => 'Patient reports 30% reduction in numbness following initial decompression session.',
+                'record_date' => Carbon::now()->subDays(2),
+            ],
+            [
+                'patient_id' => $createdPatients[1]->id,
+                'doctor_id' => $doctors[1]->id,
+                'chief_complaint' => 'Persistent cervical neck stiffness and daily tension headaches originating at suboccipital region.',
+                'pain_level' => 6,
+                'medical_history' => 'Sedentary desk job 9+ hours daily. Cervical strain following minor fender bender 2 years ago.',
+                'current_medications' => 'Acetaminophen 500mg, Magnesium glycinate.',
+                'allergies' => 'No known drug allergies (NKDA).',
+                'physical_examination' => 'Forward head posture +3cm. Reduced cervical lateral rotation (Right: 40 deg, Left: 65 deg). Suboccipital muscle hypertonicity.',
+                'diagnosis' => 'Cervical Spine Dysfunction & Postural Cervicogenic Headache.',
+                'treatment_plan' => 'Cervical spinal manipulation 2x weekly. Ergonomic workplace assessment and postural neck traction.',
+                'progress_notes' => 'Headache frequency reduced from daily to 1-2 per week after 2 weeks of care.',
+                'record_date' => Carbon::now()->subDays(5),
+            ],
+        ];
 
-        $startOfWeek = Carbon::now()->startOfWeek();
+        foreach ($clinicalRecords as $recordData) {
+            $record = MedicalRecord::create($recordData);
 
-        // Seed 25 appointments across Mon - Sun
-        for ($day = 0; $day < 7; $day++) {
-            $currentDay = (clone $startOfWeek)->addDays($day);
-            $apptsPerDay = rand(3, 5);
+            // Add sample X-ray attachment record
+            MedicalRecordAttachment::create([
+                'medical_record_id' => $record->id,
+                'file_name' => 'Lumbar_Spine_XRay_AP_Lateral.png',
+                'file_path' => 'medical_records/sample_xray.png',
+                'file_type' => 'xray',
+                'mime_type' => 'image/png',
+                'file_size' => 2450000,
+            ]);
 
-            for ($slot = 0; $slot < $apptsPerDay; $slot++) {
-                $pIndex = rand(0, count($createdPatients) - 1);
-                $dIndex = rand(0, count($doctors) - 1);
-                $patient = $createdPatients[$pIndex];
-                $doctor = $doctors[$dIndex];
-
-                $hour = 8 + ($slot * 2);
-                $apptTime = (clone $currentDay)->setHour($hour)->setMinute(0);
-
-                // Assign status logically based on past/present/future
-                if ($currentDay->isToday()) {
-                    $status = $slot === 0 ? 'completed' : ($slot === 1 ? 'in_progress' : ($slot === 2 ? 'checked_in' : 'scheduled'));
-                } elseif ($currentDay->isPast()) {
-                    $status = rand(1, 10) > 3 ? 'completed' : ($slot % 2 === 0 ? 'cancelled' : 'no_show');
-                } else {
-                    $status = 'scheduled';
-                }
-
-                $duration = $durations[rand(0, count($durations) - 1)];
-
-                $appt = Appointment::create([
-                    'patient_id' => $patient->id,
-                    'doctor_id' => $doctor->id,
-                    'chiropractor_id' => $doctor->user_id ?? $chiropractor->id,
-                    'appointment_date' => $apptTime,
-                    'duration' => $duration,
-                    'status' => $status,
-                    'service_type' => $services[rand(0, count($services) - 1)],
-                    'notes' => "Patient session for {$patient->first_name} with {$doctor->name}.",
-                    'created_at' => $apptTime,
-                ]);
-
-                Payment::create([
-                    'patient_id' => $patient->id,
-                    'appointment_id' => $appt->id,
-                    'amount' => rand(120, 250),
-                    'status' => $status === 'completed' ? 'paid' : 'pending',
-                    'payment_date' => $status === 'completed' ? $apptTime : null,
-                    'created_at' => $apptTime,
-                ]);
-            }
+            MedicalRecordAttachment::create([
+                'medical_record_id' => $record->id,
+                'file_name' => 'MRI_Radiology_Report.pdf',
+                'file_path' => 'medical_records/sample_report.pdf',
+                'file_type' => 'pdf',
+                'mime_type' => 'application/pdf',
+                'file_size' => 1200000,
+            ]);
         }
     }
 }
