@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -42,6 +43,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('appointments', AppointmentController::class);
     Route::patch('appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])
         ->name('appointments.reschedule');
+
+    // Medical Records Module Routes
+    Route::resource('medical-records', MedicalRecordController::class);
 
     // Admin User Management Routes
     Route::middleware(EnsureHasRole::class . ':admin')->prefix('admin')->name('admin.')->group(function () {

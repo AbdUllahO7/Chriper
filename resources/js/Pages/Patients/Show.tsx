@@ -10,9 +10,20 @@ interface AppointmentRecord {
     chiropractor?: { name: string };
 }
 
+interface MedicalRecordItem {
+    id: number;
+    chief_complaint: string;
+    pain_level: number;
+    diagnosis: string | null;
+    record_date: string;
+    doctor?: { name: string };
+    attachments?: Array<{ id: number; file_name: string; file_type: string; file_url: string }>;
+}
+
 interface ShowProps {
     patient: Patient & {
         appointments: AppointmentRecord[];
+        medicalRecords?: MedicalRecordItem[];
     };
 }
 
@@ -94,29 +105,73 @@ export default function Show({ patient }: ShowProps) {
                     </div>
                 </div>
 
-                {/* Right Details & History Column */}
+                {/* Right Details & Clinical History Column */}
                 <div className="lg:col-span-2 space-y-6">
-                    {/* Residential Address & Notes */}
-                    <div className="glass-card rounded-3xl p-8 border border-white/10 shadow-2xl space-y-6">
-                        <div>
-                            <h3 className="text-base font-bold text-white mb-2">Residential Address</h3>
-                            <p className="text-sm text-gray-300 bg-white/[0.03] p-4 rounded-2xl border border-white/5">
-                                {patient.address || 'No physical address recorded.'}
-                            </p>
+                    {/* Clinical Medical Records */}
+                    <div className="glass-card rounded-3xl p-8 border border-purple-500/30 shadow-2xl space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-bold text-white">Clinical Medical Records (9 Sections)</h3>
+                                <span className="text-xs text-purple-400">Past diagnoses, 1-10 pain levels & attachments</span>
+                            </div>
+                            <span className="text-xs text-purple-300 font-mono">
+                                {patient.medicalRecords?.length || 0} records
+                            </span>
                         </div>
 
-                        <div>
-                            <h3 className="text-base font-bold text-white mb-2">Clinical & Medical Notes</h3>
-                            <p className="text-sm text-gray-300 bg-white/[0.03] p-4 rounded-2xl border border-white/5 whitespace-pre-wrap leading-relaxed">
-                                {patient.notes || 'No clinical notes recorded.'}
-                            </p>
+                        <div className="space-y-3">
+                            {!patient.medicalRecords || patient.medicalRecords.length === 0 ? (
+                                <p className="text-xs text-gray-500 py-4 text-center">No clinical medical records filed yet.</p>
+                            ) : (
+                                patient.medicalRecords.map((rec) => (
+                                    <div
+                                        key={rec.id}
+                                        className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-purple-500/40 transition-colors"
+                                    >
+                                        <div className="space-y-1">
+                                            <span className="font-extrabold text-white text-sm block">
+                                                {rec.chief_complaint}
+                                            </span>
+                                            {rec.diagnosis && (
+                                                <span className="text-xs text-purple-300 font-medium block">
+                                                    Diagnosis: {rec.diagnosis}
+                                                </span>
+                                            )}
+                                            <span className="text-[11px] text-gray-400 block font-mono">
+                                                Exam Date: {new Date(rec.record_date).toLocaleDateString()} • {rec.doctor?.name}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center gap-3 shrink-0">
+                                            <span
+                                                className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                                                    rec.pain_level <= 3
+                                                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                                                        : rec.pain_level <= 6
+                                                        ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                                                        : 'bg-red-500/20 text-red-300 border-red-500/30'
+                                                }`}
+                                            >
+                                                Pain: {rec.pain_level} / 10
+                                            </span>
+
+                                            <Link
+                                                href={route('medical-records.show', rec.id)}
+                                                className="px-3.5 py-1.5 rounded-xl bg-purple-600/20 text-purple-300 hover:bg-purple-600/40 text-xs font-bold transition-colors"
+                                            >
+                                                Open Dossier
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
                         </div>
                     </div>
 
                     {/* Appointment History */}
                     <div className="glass-card rounded-3xl p-8 border border-white/10 shadow-2xl space-y-4">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-bold text-white">Appointment History</h3>
+                            <h3 className="text-lg font-bold text-white">Appointment Visit History</h3>
                             <span className="text-xs text-purple-400 font-mono">
                                 {patient.appointments?.length || 0} visits recorded
                             </span>
