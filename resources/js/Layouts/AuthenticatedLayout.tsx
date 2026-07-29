@@ -39,6 +39,17 @@ export default function Authenticated({
                                     Dashboard
                                 </Link>
 
+                                <Link
+                                    href={route('patients.index')}
+                                    className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                                        route().current('patients.*')
+                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/30'
+                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    }`}
+                                >
+                                    Patients
+                                </Link>
+
                                 {user.role === 'admin' && (
                                     <Link
                                         href={route('admin.users.index')}
@@ -52,6 +63,7 @@ export default function Authenticated({
                                     </Link>
                                 )}
                             </div>
+
                         </div>
 
                         <div className="hidden sm:flex sm:items-center">

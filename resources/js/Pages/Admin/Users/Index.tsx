@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import ConfirmModal from '@/Components/ConfirmModal';
 import { UserRole } from '@/types';
 import { Head, useForm, router } from '@inertiajs/react';
 import { useState } from 'react';
@@ -23,6 +24,7 @@ export default function Index({ users, filters, roles }: Props) {
     const [selectedRoleFilter, setSelectedRoleFilter] = useState(filters.role || '');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<StaffUser | null>(null);
+    const [deletingUser, setDeletingUser] = useState<StaffUser | null>(null);
 
     // Create User Form
     const createForm = useForm({
@@ -79,9 +81,9 @@ export default function Index({ users, filters, roles }: Props) {
         });
     };
 
-    const handleDeleteUser = (user: StaffUser) => {
-        if (confirm(`Are you sure you want to remove ${user.name}?`)) {
-            router.delete(route('admin.users.destroy', user.id));
+    const confirmDeleteUser = () => {
+        if (deletingUser) {
+            router.delete(route('admin.users.destroy', deletingUser.id));
         }
     };
 
@@ -175,7 +177,6 @@ export default function Index({ users, filters, roles }: Props) {
                     </button>
                 </form>
 
-                {/* Role Tabs */}
                 <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto">
                     <button
                         onClick={() => handleRoleFilterChange('')}
@@ -265,7 +266,7 @@ export default function Index({ users, filters, roles }: Props) {
                                                     Edit Role
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDeleteUser(user)}
+                                                    onClick={() => setDeletingUser(user)}
                                                     className="px-3 py-1.5 rounded-lg bg-white/5 text-red-400 hover:bg-red-500/20 text-xs font-semibold transition-colors"
                                                 >
                                                     Delete
@@ -279,6 +280,16 @@ export default function Index({ users, filters, roles }: Props) {
                     </table>
                 </div>
             </div>
+
+            {/* Custom Confirm Modal for User Deletion */}
+            <ConfirmModal
+                isOpen={!!deletingUser}
+                title="Delete Staff Account"
+                message={`Are you sure you want to remove staff member "${deletingUser?.name}"? They will lose all access to the system.`}
+                confirmText="Remove Staff"
+                onConfirm={confirmDeleteUser}
+                onClose={() => setDeletingUser(null)}
+            />
 
             {/* Create Staff Modal */}
             {isCreateModalOpen && (
@@ -303,11 +314,8 @@ export default function Index({ users, filters, roles }: Props) {
                                     value={createForm.data.name}
                                     onChange={(e) => createForm.setData('name', e.target.value)}
                                     placeholder="e.g. Dr. Jane Doe"
-                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none text-sm"
+                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 outline-none text-sm"
                                 />
-                                {createForm.errors.name && (
-                                    <span className="text-xs text-red-400 mt-1 block">{createForm.errors.name}</span>
-                                )}
                             </div>
 
                             <div>
@@ -318,11 +326,8 @@ export default function Index({ users, filters, roles }: Props) {
                                     value={createForm.data.email}
                                     onChange={(e) => createForm.setData('email', e.target.value)}
                                     placeholder="e.g. jane@clinic.com"
-                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none text-sm"
+                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 outline-none text-sm"
                                 />
-                                {createForm.errors.email && (
-                                    <span className="text-xs text-red-400 mt-1 block">{createForm.errors.email}</span>
-                                )}
                             </div>
 
                             <div>
@@ -333,11 +338,8 @@ export default function Index({ users, filters, roles }: Props) {
                                     value={createForm.data.password}
                                     onChange={(e) => createForm.setData('password', e.target.value)}
                                     placeholder="Minimum 8 characters"
-                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none text-sm"
+                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 outline-none text-sm"
                                 />
-                                {createForm.errors.password && (
-                                    <span className="text-xs text-red-400 mt-1 block">{createForm.errors.password}</span>
-                                )}
                             </div>
 
                             <div>
@@ -345,7 +347,7 @@ export default function Index({ users, filters, roles }: Props) {
                                 <select
                                     value={createForm.data.role}
                                     onChange={(e) => createForm.setData('role', e.target.value as UserRole)}
-                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none text-sm capitalize"
+                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 outline-none text-sm capitalize"
                                 >
                                     <option value="receptionist">Receptionist (Intake & Scheduling)</option>
                                     <option value="chiropractor">Chiropractor (Treatments & Clinical Notes)</option>
@@ -396,7 +398,7 @@ export default function Index({ users, filters, roles }: Props) {
                                     required
                                     value={editForm.data.name}
                                     onChange={(e) => editForm.setData('name', e.target.value)}
-                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none text-sm"
+                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 outline-none text-sm"
                                 />
                             </div>
 
@@ -407,7 +409,7 @@ export default function Index({ users, filters, roles }: Props) {
                                     required
                                     value={editForm.data.email}
                                     onChange={(e) => editForm.setData('email', e.target.value)}
-                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none text-sm"
+                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 outline-none text-sm"
                                 />
                             </div>
 
@@ -416,7 +418,7 @@ export default function Index({ users, filters, roles }: Props) {
                                 <select
                                     value={editForm.data.role}
                                     onChange={(e) => editForm.setData('role', e.target.value as UserRole)}
-                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none text-sm capitalize"
+                                    className="w-full bg-[#0b0f19] text-white rounded-xl p-3 border border-white/10 focus:border-purple-500 outline-none text-sm capitalize"
                                 >
                                     <option value="receptionist">Receptionist</option>
                                     <option value="chiropractor">Chiropractor</option>

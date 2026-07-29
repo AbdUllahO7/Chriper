@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Seed Users (Roles)
+        // 1. Seed Staff Users (Roles)
         $admin = User::updateOrCreate(
             ['email' => 'admin@chirper.com'],
             [
@@ -45,20 +45,92 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Seed Patients across months (Jan to Jul)
+        // 2. Seed Realistic Patients with all 10 fields
         $samplePatients = [
-            ['first_name' => 'Robert', 'last_name' => 'Martinez', 'email' => 'robert.m@example.com', 'phone' => '555-0192', 'status' => 'active', 'month' => 1],
-            ['first_name' => 'Emily', 'last_name' => 'Watson', 'email' => 'emily.w@example.com', 'phone' => '555-0184', 'status' => 'active', 'month' => 1],
-            ['first_name' => 'Michael', 'last_name' => 'Chang', 'email' => 'mchang@example.com', 'phone' => '555-0211', 'status' => 'active', 'month' => 2],
-            ['first_name' => 'Jessica', 'last_name' => 'Alba', 'email' => 'jessica.a@example.com', 'phone' => '555-0329', 'status' => 'active', 'month' => 2],
-            ['first_name' => 'David', 'last_name' => 'Beckham', 'email' => 'david.b@example.com', 'phone' => '555-0482', 'status' => 'active', 'month' => 3],
-            ['first_name' => 'Sophia', 'last_name' => 'Loren', 'email' => 'sophia.l@example.com', 'phone' => '555-0519', 'status' => 'active', 'month' => 3],
-            ['first_name' => 'James', 'last_name' => 'Bond', 'email' => 'jbond@example.com', 'phone' => '555-0007', 'status' => 'active', 'month' => 4],
-            ['first_name' => 'Olivia', 'last_name' => 'Wilde', 'email' => 'olivia.w@example.com', 'phone' => '555-0671', 'status' => 'active', 'month' => 5],
-            ['first_name' => 'Daniel', 'last_name' => 'Craig', 'email' => 'dcraig@example.com', 'phone' => '555-0728', 'status' => 'active', 'month' => 6],
-            ['first_name' => 'Emma', 'last_name' => 'Stone', 'email' => 'estone@example.com', 'phone' => '555-0812', 'status' => 'active', 'month' => 7],
-            ['first_name' => 'Chris', 'last_name' => 'Hemsworth', 'email' => 'chems@example.com', 'phone' => '555-0921', 'status' => 'active', 'month' => 7],
-            ['first_name' => 'Scarlett', 'last_name' => 'Johansson', 'email' => 'scarlett@example.com', 'phone' => '555-1049', 'status' => 'active', 'month' => 7],
+            [
+                'first_name' => 'Robert',
+                'last_name' => 'Martinez',
+                'date_of_birth' => '1985-04-12',
+                'gender' => 'male',
+                'email' => 'robert.m@example.com',
+                'phone' => '555-0192',
+                'address' => '742 Evergreen Terrace, Springfield',
+                'emergency_contact' => 'Maria Martinez (Spouse) - 555-0193',
+                'insurance' => 'BlueCross BlueShield #BC-9482',
+                'notes' => 'Chronic lower back pain from heavy lifting. Responding well to lumbar decompression therapy.',
+                'status' => 'active',
+                'month' => 1,
+            ],
+            [
+                'first_name' => 'Emily',
+                'last_name' => 'Watson',
+                'date_of_birth' => '1992-08-24',
+                'gender' => 'female',
+                'email' => 'emily.w@example.com',
+                'phone' => '555-0184',
+                'address' => '1048 Ocean Avenue, Santa Monica',
+                'emergency_contact' => 'David Watson (Brother) - 555-0185',
+                'insurance' => 'Aetna Healthcare #AE-7721',
+                'notes' => 'Cervical spine stiffness and tension headaches. Weekly chiropractic alignment scheduled.',
+                'status' => 'active',
+                'month' => 1,
+            ],
+            [
+                'first_name' => 'Michael',
+                'last_name' => 'Chang',
+                'date_of_birth' => '1978-11-03',
+                'gender' => 'male',
+                'email' => 'mchang@example.com',
+                'phone' => '555-0211',
+                'address' => '350 Fifth Avenue, New York',
+                'emergency_contact' => 'Linda Chang (Wife) - 555-0212',
+                'insurance' => 'UnitedHealth #UH-3391',
+                'notes' => 'Sciatica symptoms down right leg. Postural rehabilitation exercise plan prescribed.',
+                'status' => 'active',
+                'month' => 2,
+            ],
+            [
+                'first_name' => 'Jessica',
+                'last_name' => 'Alba',
+                'date_of_birth' => '1988-01-15',
+                'gender' => 'female',
+                'email' => 'jessica.a@example.com',
+                'phone' => '555-0329',
+                'address' => '120 Sunset Boulevard, Los Angeles',
+                'emergency_contact' => 'Cash Warren - 555-0330',
+                'insurance' => 'Cigna Health #CG-8812',
+                'notes' => 'Thoracic spine tightness. Responds well to heat therapy prior to spinal manipulation.',
+                'status' => 'active',
+                'month' => 2,
+            ],
+            [
+                'first_name' => 'David',
+                'last_name' => 'Beckham',
+                'date_of_birth' => '1975-05-02',
+                'gender' => 'male',
+                'email' => 'david.b@example.com',
+                'phone' => '555-0482',
+                'address' => '450 Victoria Lane, Miami',
+                'emergency_contact' => 'Victoria Beckham - 555-0483',
+                'insurance' => 'Kaiser Permanente #KP-1092',
+                'notes' => 'Lumbar strain following athletic training. Weekly spinal adjustment routine.',
+                'status' => 'active',
+                'month' => 3,
+            ],
+            [
+                'first_name' => 'Sophia',
+                'last_name' => 'Loren',
+                'date_of_birth' => '1995-09-30',
+                'gender' => 'female',
+                'email' => 'sophia.l@example.com',
+                'phone' => '555-0519',
+                'address' => '880 Grand Avenue, Chicago',
+                'emergency_contact' => 'Marco Loren - 555-0520',
+                'insurance' => 'Humana Care #HM-4401',
+                'notes' => 'Neck strain and upper back discomfort from desk work.',
+                'status' => 'active',
+                'month' => 3,
+            ],
         ];
 
         $createdPatients = [];
@@ -69,7 +141,13 @@ class DatabaseSeeder extends Seeder
                 [
                     'first_name' => $pData['first_name'],
                     'last_name' => $pData['last_name'],
+                    'date_of_birth' => $pData['date_of_birth'],
+                    'gender' => $pData['gender'],
                     'phone' => $pData['phone'],
+                    'address' => $pData['address'],
+                    'emergency_contact' => $pData['emergency_contact'],
+                    'insurance' => $pData['insurance'],
+                    'notes' => $pData['notes'],
                     'status' => $pData['status'],
                     'created_at' => $createdDate,
                     'updated_at' => $createdDate,
@@ -77,22 +155,29 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // Add additional random active patients to reach realistic total (e.g. 45 patients)
-        for ($i = 1; $i <= 33; $i++) {
+        // Add additional sample active/inactive patients to reach realistic total for pagination
+        $genders = ['male', 'female', 'other'];
+        for ($i = 1; $i <= 20; $i++) {
             $month = rand(1, 7);
             $cDate = Carbon::create(now()->year, $month, rand(1, 28));
             $createdPatients[] = Patient::create([
                 'first_name' => "Patient{$i}",
                 'last_name' => "Sample",
+                'date_of_birth' => "199" . rand(0, 9) . "-0" . rand(1, 9) . "-15",
+                'gender' => $genders[$i % 3],
                 'email' => "patient{$i}@clinic.com",
                 'phone' => "555-100{$i}",
+                'address' => "10{$i} Main Street, Suite " . ($i * 10),
+                'emergency_contact' => "Emergency Contact {$i} - 555-900{$i}",
+                'insurance' => "Health Plan #" . (1000 + $i),
+                'notes' => "Regular maintenance patient care record {$i}.",
                 'status' => rand(1, 10) > 2 ? 'active' : 'inactive',
                 'created_at' => $cDate,
                 'updated_at' => $cDate,
             ]);
         }
 
-        // 3. Seed Appointments for today, this week, and historical
+        // 3. Seed Appointments
         $services = ['Spinal Adjustment', 'Initial Consultation', 'Physical Therapy', 'Postural Rehab', 'Decompression Therapy'];
 
         // Today's appointments
@@ -106,7 +191,6 @@ class DatabaseSeeder extends Seeder
                 'service_type' => $services[$index % count($services)],
             ]);
 
-            // Seed Payments
             Payment::create([
                 'patient_id' => $patient->id,
                 'appointment_id' => $appointment->id,
@@ -117,11 +201,11 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // Seed Appointments for current week (Mon - Sun)
+        // Current week appointments
         $startOfWeek = Carbon::now()->startOfWeek();
         for ($day = 0; $day < 7; $day++) {
             $dayDate = (clone $startOfWeek)->addDays($day);
-            $appCount = rand(8, 16);
+            $appCount = rand(4, 8);
             for ($k = 0; $k < $appCount; $k++) {
                 $randomPatient = $createdPatients[array_rand($createdPatients)];
                 $status = ($dayDate->isPast()) ? 'completed' : 'scheduled';
@@ -143,22 +227,6 @@ class DatabaseSeeder extends Seeder
                     'status' => ($status === 'completed') ? 'paid' : 'pending',
                     'payment_date' => ($status === 'completed') ? $appTime : null,
                     'created_at' => $appTime,
-                ]);
-            }
-        }
-
-        // Seed Historical Monthly Revenue Payments (Jan - Jul)
-        for ($m = 1; $m <= 7; $m++) {
-            $monthDate = Carbon::create(now()->year, $m, 15);
-            $numPayments = rand(40, 70);
-            for ($p = 0; $p < $numPayments; $p++) {
-                $pDate = (clone $monthDate)->setDay(rand(1, 28));
-                Payment::create([
-                    'patient_id' => $createdPatients[array_rand($createdPatients)]->id,
-                    'amount' => rand(150, 350),
-                    'status' => 'paid',
-                    'payment_date' => $pDate,
-                    'created_at' => $pDate,
                 ]);
             }
         }
