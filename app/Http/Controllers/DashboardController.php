@@ -29,7 +29,7 @@ class DashboardController extends Controller
         $appDiff = $todaysCount - $yesterdaysCount;
         $appChangeText = $yesterdaysCount > 0
             ? ($appDiff >= 0 ? "+{$appDiff}" : "{$appDiff}") . ' vs yesterday'
-            : '+100% vs yesterday';
+            : '+100%';
 
         // 2. KPI Metric Card 2: Active Patients (DB Query)
         $activePatientsCount = Patient::where('status', 'active')->count();
@@ -62,7 +62,7 @@ class DashboardController extends Controller
         $pendingPaymentsTotal = Payment::where('status', 'pending')->sum('amount');
         $pendingInvoicesCount = Payment::where('status', 'pending')->count();
 
-        // Compile Database Cards Array
+        // Compile Database Cards Array (Clean integer formatting for currency)
         $cards = [
             'todaysAppointments' => [
                 'title' => "Today's Appointments",
@@ -76,28 +76,28 @@ class DashboardController extends Controller
                 'value' => (string) $activePatientsCount,
                 'change' => "{$activePercent}% active",
                 'trend' => 'up',
-                'description' => 'on active care plans',
+                'description' => 'on care plans',
             ],
             'totalPatients' => [
                 'title' => 'Total Patients',
                 'value' => (string) $totalPatientsCount,
                 'change' => "+{$newThisMonth} new",
                 'trend' => 'up',
-                'description' => 'registered clinic patient records',
+                'description' => 'clinic records',
             ],
             'monthlyRevenue' => [
                 'title' => 'Monthly Revenue',
-                'value' => '$' . number_format($currentMonthRevenue, 2),
+                'value' => '$' . number_format($currentMonthRevenue, 0),
                 'change' => $revChangeText,
                 'trend' => 'up',
                 'description' => 'vs last month ($' . number_format($lastMonthRevenue, 0) . ')',
             ],
             'pendingPayments' => [
                 'title' => 'Pending Payments',
-                'value' => '$' . number_format($pendingPaymentsTotal, 2),
+                'value' => '$' . number_format($pendingPaymentsTotal, 0),
                 'change' => "{$pendingInvoicesCount} invoices",
                 'trend' => 'warning',
-                'description' => 'unpaid patient balances',
+                'description' => 'unpaid balances',
             ],
         ];
 
@@ -157,7 +157,7 @@ class DashboardController extends Controller
             'labels' => $monthsLabels,
             'datasets' => [
                 [
-                    'label' => 'DB Revenue ($)',
+                    'label' => 'Revenue ($)',
                     'data' => $monthlyRevenueData,
                     'fill' => true,
                     'backgroundColor' => 'rgba(168, 85, 247, 0.15)',
@@ -166,7 +166,7 @@ class DashboardController extends Controller
                     'pointBackgroundColor' => '#a855f7',
                 ],
                 [
-                    'label' => 'Budget Target ($)',
+                    'label' => 'Target ($)',
                     'data' => $monthlyTargetData,
                     'fill' => false,
                     'borderColor' => 'rgba(255, 255, 255, 0.3)',
