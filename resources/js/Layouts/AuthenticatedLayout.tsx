@@ -50,6 +50,17 @@ export default function Authenticated({
                                     Patients
                                 </Link>
 
+                                <Link
+                                    href={route('doctors.index')}
+                                    className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                                        route().current('doctors.*')
+                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/30'
+                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    }`}
+                                >
+                                    Doctors
+                                </Link>
+
                                 {user.role === 'admin' && (
                                     <Link
                                         href={route('admin.users.index')}
@@ -63,6 +74,7 @@ export default function Authenticated({
                                     </Link>
                                 )}
                             </div>
+
 
                         </div>
 

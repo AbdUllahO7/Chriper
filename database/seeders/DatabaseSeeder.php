@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Appointment;
+use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\Payment;
 use App\Models\User;
@@ -45,7 +46,70 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Seed Realistic Patients with all 10 fields
+        // 2. Seed Doctors (Chiropractors)
+        $sampleDoctors = [
+            [
+                'user_id' => $chiropractor->id,
+                'name' => 'Dr. Marcus Wright',
+                'specialty' => 'Spinal Decompression & Postural Rehab',
+                'phone' => '555-0199',
+                'email' => 'chiropractor@chirper.com',
+                'working_hours' => '08:00 AM - 04:00 PM',
+                'room_number' => 'Suite 204',
+                'is_available' => true,
+                'availability_status' => 'available',
+            ],
+            [
+                'user_id' => $admin->id,
+                'name' => 'Dr. Alexander Vance',
+                'specialty' => 'Orthopedic & Pediatric Chiropractic',
+                'phone' => '555-0100',
+                'email' => 'admin@chirper.com',
+                'working_hours' => '09:00 AM - 05:00 PM',
+                'room_number' => 'Suite 301 (Chief Suite)',
+                'is_available' => true,
+                'availability_status' => 'available',
+            ],
+            [
+                'user_id' => null,
+                'name' => 'Dr. Elena Rostova',
+                'specialty' => 'Sports Injury & Neuromuscular Therapy',
+                'phone' => '555-0492',
+                'email' => 'elena.rostova@clinic.com',
+                'working_hours' => '10:00 AM - 06:00 PM',
+                'room_number' => 'Suite 108',
+                'is_available' => false,
+                'availability_status' => 'busy',
+            ],
+            [
+                'user_id' => null,
+                'name' => 'Dr. Jonathan Reed',
+                'specialty' => 'Vertebral Alignment & Biomechanics',
+                'phone' => '555-0781',
+                'email' => 'jreed@clinic.com',
+                'working_hours' => '07:30 AM - 03:30 PM',
+                'room_number' => 'Suite 212',
+                'is_available' => true,
+                'availability_status' => 'available',
+            ],
+            [
+                'user_id' => null,
+                'name' => 'Dr. Samantha Hayes',
+                'specialty' => 'Cervical Spine & Headache Relief',
+                'phone' => '555-0912',
+                'email' => 'shayes@clinic.com',
+                'working_hours' => '12:00 PM - 08:00 PM',
+                'room_number' => 'Suite 115',
+                'is_available' => false,
+                'availability_status' => 'off_duty',
+            ],
+        ];
+
+        foreach ($sampleDoctors as $doc) {
+            Doctor::updateOrCreate(['email' => $doc['email']], $doc);
+        }
+
+        // 3. Seed Realistic Patients
         $samplePatients = [
             [
                 'first_name' => 'Robert',
@@ -89,48 +153,6 @@ class DatabaseSeeder extends Seeder
                 'status' => 'active',
                 'month' => 2,
             ],
-            [
-                'first_name' => 'Jessica',
-                'last_name' => 'Alba',
-                'date_of_birth' => '1988-01-15',
-                'gender' => 'female',
-                'email' => 'jessica.a@example.com',
-                'phone' => '555-0329',
-                'address' => '120 Sunset Boulevard, Los Angeles',
-                'emergency_contact' => 'Cash Warren - 555-0330',
-                'insurance' => 'Cigna Health #CG-8812',
-                'notes' => 'Thoracic spine tightness. Responds well to heat therapy prior to spinal manipulation.',
-                'status' => 'active',
-                'month' => 2,
-            ],
-            [
-                'first_name' => 'David',
-                'last_name' => 'Beckham',
-                'date_of_birth' => '1975-05-02',
-                'gender' => 'male',
-                'email' => 'david.b@example.com',
-                'phone' => '555-0482',
-                'address' => '450 Victoria Lane, Miami',
-                'emergency_contact' => 'Victoria Beckham - 555-0483',
-                'insurance' => 'Kaiser Permanente #KP-1092',
-                'notes' => 'Lumbar strain following athletic training. Weekly spinal adjustment routine.',
-                'status' => 'active',
-                'month' => 3,
-            ],
-            [
-                'first_name' => 'Sophia',
-                'last_name' => 'Loren',
-                'date_of_birth' => '1995-09-30',
-                'gender' => 'female',
-                'email' => 'sophia.l@example.com',
-                'phone' => '555-0519',
-                'address' => '880 Grand Avenue, Chicago',
-                'emergency_contact' => 'Marco Loren - 555-0520',
-                'insurance' => 'Humana Care #HM-4401',
-                'notes' => 'Neck strain and upper back discomfort from desk work.',
-                'status' => 'active',
-                'month' => 3,
-            ],
         ];
 
         $createdPatients = [];
@@ -155,9 +177,9 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // Add additional sample active/inactive patients to reach realistic total for pagination
+        // Additional patients
         $genders = ['male', 'female', 'other'];
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 15; $i++) {
             $month = rand(1, 7);
             $cDate = Carbon::create(now()->year, $month, rand(1, 28));
             $createdPatients[] = Patient::create([
@@ -177,10 +199,9 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // 3. Seed Appointments
+        // Seed Appointments
         $services = ['Spinal Adjustment', 'Initial Consultation', 'Physical Therapy', 'Postural Rehab', 'Decompression Therapy'];
 
-        // Today's appointments
         foreach (array_slice($createdPatients, 0, 6) as $index => $patient) {
             $appDate = Carbon::today()->setHour(8 + ($index * 2));
             $appointment = Appointment::create([
@@ -199,36 +220,6 @@ class DatabaseSeeder extends Seeder
                 'payment_date' => $index < 4 ? $appDate : null,
                 'created_at' => $appDate,
             ]);
-        }
-
-        // Current week appointments
-        $startOfWeek = Carbon::now()->startOfWeek();
-        for ($day = 0; $day < 7; $day++) {
-            $dayDate = (clone $startOfWeek)->addDays($day);
-            $appCount = rand(4, 8);
-            for ($k = 0; $k < $appCount; $k++) {
-                $randomPatient = $createdPatients[array_rand($createdPatients)];
-                $status = ($dayDate->isPast()) ? 'completed' : 'scheduled';
-                $appTime = (clone $dayDate)->setHour(8 + ($k % 9));
-
-                $appt = Appointment::create([
-                    'patient_id' => $randomPatient->id,
-                    'chiropractor_id' => $chiropractor->id,
-                    'appointment_date' => $appTime,
-                    'status' => $status,
-                    'service_type' => $services[array_rand($services)],
-                    'created_at' => $appTime,
-                ]);
-
-                Payment::create([
-                    'patient_id' => $randomPatient->id,
-                    'appointment_id' => $appt->id,
-                    'amount' => rand(100, 300),
-                    'status' => ($status === 'completed') ? 'paid' : 'pending',
-                    'payment_date' => ($status === 'completed') ? $appTime : null,
-                    'created_at' => $appTime,
-                ]);
-            }
         }
     }
 }
