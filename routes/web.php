@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\PatientController;
@@ -36,6 +37,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('doctors', DoctorController::class);
     Route::patch('doctors/{doctor}/toggle-availability', [DoctorController::class, 'toggleAvailability'])
         ->name('doctors.toggle-availability');
+
+    // Appointment Scheduling Module Routes
+    Route::resource('appointments', AppointmentController::class);
+    Route::patch('appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])
+        ->name('appointments.reschedule');
 
     // Admin User Management Routes
     Route::middleware(EnsureHasRole::class . ':admin')->prefix('admin')->name('admin.')->group(function () {

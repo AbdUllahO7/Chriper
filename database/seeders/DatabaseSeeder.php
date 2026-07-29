@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Seed Staff Users (Roles)
+        // 1. Staff Users
         $admin = User::updateOrCreate(
             ['email' => 'admin@chirper.com'],
             [
@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Seed Doctors (Chiropractors)
+        // 2. Seed Doctors
         $sampleDoctors = [
             [
                 'user_id' => $chiropractor->id,
@@ -66,7 +66,7 @@ class DatabaseSeeder extends Seeder
                 'phone' => '555-0100',
                 'email' => 'admin@chirper.com',
                 'working_hours' => '09:00 AM - 05:00 PM',
-                'room_number' => 'Suite 301 (Chief Suite)',
+                'room_number' => 'Suite 301',
                 'is_available' => true,
                 'availability_status' => 'available',
             ],
@@ -92,134 +92,90 @@ class DatabaseSeeder extends Seeder
                 'is_available' => true,
                 'availability_status' => 'available',
             ],
-            [
-                'user_id' => null,
-                'name' => 'Dr. Samantha Hayes',
-                'specialty' => 'Cervical Spine & Headache Relief',
-                'phone' => '555-0912',
-                'email' => 'shayes@clinic.com',
-                'working_hours' => '12:00 PM - 08:00 PM',
-                'room_number' => 'Suite 115',
-                'is_available' => false,
-                'availability_status' => 'off_duty',
-            ],
         ];
 
+        $doctors = [];
         foreach ($sampleDoctors as $doc) {
-            Doctor::updateOrCreate(['email' => $doc['email']], $doc);
+            $doctors[] = Doctor::updateOrCreate(['email' => $doc['email']], $doc);
         }
 
-        // 3. Seed Realistic Patients
+        // 3. Seed Patients
         $samplePatients = [
-            [
-                'first_name' => 'Robert',
-                'last_name' => 'Martinez',
-                'date_of_birth' => '1985-04-12',
-                'gender' => 'male',
-                'email' => 'robert.m@example.com',
-                'phone' => '555-0192',
-                'address' => '742 Evergreen Terrace, Springfield',
-                'emergency_contact' => 'Maria Martinez (Spouse) - 555-0193',
-                'insurance' => 'BlueCross BlueShield #BC-9482',
-                'notes' => 'Chronic lower back pain from heavy lifting. Responding well to lumbar decompression therapy.',
-                'status' => 'active',
-                'month' => 1,
-            ],
-            [
-                'first_name' => 'Emily',
-                'last_name' => 'Watson',
-                'date_of_birth' => '1992-08-24',
-                'gender' => 'female',
-                'email' => 'emily.w@example.com',
-                'phone' => '555-0184',
-                'address' => '1048 Ocean Avenue, Santa Monica',
-                'emergency_contact' => 'David Watson (Brother) - 555-0185',
-                'insurance' => 'Aetna Healthcare #AE-7721',
-                'notes' => 'Cervical spine stiffness and tension headaches. Weekly chiropractic alignment scheduled.',
-                'status' => 'active',
-                'month' => 1,
-            ],
-            [
-                'first_name' => 'Michael',
-                'last_name' => 'Chang',
-                'date_of_birth' => '1978-11-03',
-                'gender' => 'male',
-                'email' => 'mchang@example.com',
-                'phone' => '555-0211',
-                'address' => '350 Fifth Avenue, New York',
-                'emergency_contact' => 'Linda Chang (Wife) - 555-0212',
-                'insurance' => 'UnitedHealth #UH-3391',
-                'notes' => 'Sciatica symptoms down right leg. Postural rehabilitation exercise plan prescribed.',
-                'status' => 'active',
-                'month' => 2,
-            ],
+            ['first_name' => 'Robert', 'last_name' => 'Martinez', 'email' => 'robert.m@example.com', 'phone' => '555-0192', 'gender' => 'male', 'status' => 'active'],
+            ['first_name' => 'Emily', 'last_name' => 'Watson', 'email' => 'emily.w@example.com', 'phone' => '555-0184', 'gender' => 'female', 'status' => 'active'],
+            ['first_name' => 'Michael', 'last_name' => 'Chang', 'email' => 'mchang@example.com', 'phone' => '555-0211', 'gender' => 'male', 'status' => 'active'],
+            ['first_name' => 'Jessica', 'last_name' => 'Alba', 'email' => 'jessica.a@example.com', 'phone' => '555-0329', 'gender' => 'female', 'status' => 'active'],
+            ['first_name' => 'David', 'last_name' => 'Beckham', 'email' => 'david.b@example.com', 'phone' => '555-0482', 'gender' => 'male', 'status' => 'active'],
+            ['first_name' => 'Sophia', 'last_name' => 'Loren', 'email' => 'sophia.l@example.com', 'phone' => '555-0519', 'gender' => 'female', 'status' => 'active'],
         ];
 
         $createdPatients = [];
         foreach ($samplePatients as $pData) {
-            $createdDate = Carbon::create(now()->year, $pData['month'], rand(1, 25));
             $createdPatients[] = Patient::updateOrCreate(
                 ['email' => $pData['email']],
-                [
-                    'first_name' => $pData['first_name'],
-                    'last_name' => $pData['last_name'],
-                    'date_of_birth' => $pData['date_of_birth'],
-                    'gender' => $pData['gender'],
-                    'phone' => $pData['phone'],
-                    'address' => $pData['address'],
-                    'emergency_contact' => $pData['emergency_contact'],
-                    'insurance' => $pData['insurance'],
-                    'notes' => $pData['notes'],
-                    'status' => $pData['status'],
-                    'created_at' => $createdDate,
-                    'updated_at' => $createdDate,
-                ]
+                array_merge($pData, [
+                    'date_of_birth' => '1988-06-15',
+                    'address' => '100 Clinic Way, Suite 10',
+                    'emergency_contact' => 'Emergency Contact - 555-9999',
+                    'insurance' => 'BlueCross BlueShield #BC-9921',
+                    'notes' => 'Chiropractic treatment plan active.',
+                ])
             );
         }
 
-        // Additional patients
-        $genders = ['male', 'female', 'other'];
-        for ($i = 1; $i <= 15; $i++) {
-            $month = rand(1, 7);
-            $cDate = Carbon::create(now()->year, $month, rand(1, 28));
-            $createdPatients[] = Patient::create([
-                'first_name' => "Patient{$i}",
-                'last_name' => "Sample",
-                'date_of_birth' => "199" . rand(0, 9) . "-0" . rand(1, 9) . "-15",
-                'gender' => $genders[$i % 3],
-                'email' => "patient{$i}@clinic.com",
-                'phone' => "555-100{$i}",
-                'address' => "10{$i} Main Street, Suite " . ($i * 10),
-                'emergency_contact' => "Emergency Contact {$i} - 555-900{$i}",
-                'insurance' => "Health Plan #" . (1000 + $i),
-                'notes' => "Regular maintenance patient care record {$i}.",
-                'status' => rand(1, 10) > 2 ? 'active' : 'inactive',
-                'created_at' => $cDate,
-                'updated_at' => $cDate,
-            ]);
-        }
+        // 4. Seed Appointments across the current week with all 6 statuses
+        $statuses = ['scheduled', 'checked_in', 'in_progress', 'completed', 'cancelled', 'no_show'];
+        $services = ['Spinal Adjustment', 'Lumbar Decompression', 'Cervical Alignment', 'Physical Therapy', 'Postural Rehabilitation'];
+        $durations = [15, 30, 45, 60];
 
-        // Seed Appointments
-        $services = ['Spinal Adjustment', 'Initial Consultation', 'Physical Therapy', 'Postural Rehab', 'Decompression Therapy'];
+        $startOfWeek = Carbon::now()->startOfWeek();
 
-        foreach (array_slice($createdPatients, 0, 6) as $index => $patient) {
-            $appDate = Carbon::today()->setHour(8 + ($index * 2));
-            $appointment = Appointment::create([
-                'patient_id' => $patient->id,
-                'chiropractor_id' => $chiropractor->id,
-                'appointment_date' => $appDate,
-                'status' => $index < 4 ? 'completed' : 'scheduled',
-                'service_type' => $services[$index % count($services)],
-            ]);
+        // Seed 25 appointments across Mon - Sun
+        for ($day = 0; $day < 7; $day++) {
+            $currentDay = (clone $startOfWeek)->addDays($day);
+            $apptsPerDay = rand(3, 5);
 
-            Payment::create([
-                'patient_id' => $patient->id,
-                'appointment_id' => $appointment->id,
-                'amount' => rand(120, 250),
-                'status' => $index < 4 ? 'paid' : 'pending',
-                'payment_date' => $index < 4 ? $appDate : null,
-                'created_at' => $appDate,
-            ]);
+            for ($slot = 0; $slot < $apptsPerDay; $slot++) {
+                $pIndex = rand(0, count($createdPatients) - 1);
+                $dIndex = rand(0, count($doctors) - 1);
+                $patient = $createdPatients[$pIndex];
+                $doctor = $doctors[$dIndex];
+
+                $hour = 8 + ($slot * 2);
+                $apptTime = (clone $currentDay)->setHour($hour)->setMinute(0);
+
+                // Assign status logically based on past/present/future
+                if ($currentDay->isToday()) {
+                    $status = $slot === 0 ? 'completed' : ($slot === 1 ? 'in_progress' : ($slot === 2 ? 'checked_in' : 'scheduled'));
+                } elseif ($currentDay->isPast()) {
+                    $status = rand(1, 10) > 3 ? 'completed' : ($slot % 2 === 0 ? 'cancelled' : 'no_show');
+                } else {
+                    $status = 'scheduled';
+                }
+
+                $duration = $durations[rand(0, count($durations) - 1)];
+
+                $appt = Appointment::create([
+                    'patient_id' => $patient->id,
+                    'doctor_id' => $doctor->id,
+                    'chiropractor_id' => $doctor->user_id ?? $chiropractor->id,
+                    'appointment_date' => $apptTime,
+                    'duration' => $duration,
+                    'status' => $status,
+                    'service_type' => $services[rand(0, count($services) - 1)],
+                    'notes' => "Patient session for {$patient->first_name} with {$doctor->name}.",
+                    'created_at' => $apptTime,
+                ]);
+
+                Payment::create([
+                    'patient_id' => $patient->id,
+                    'appointment_id' => $appt->id,
+                    'amount' => rand(120, 250),
+                    'status' => $status === 'completed' ? 'paid' : 'pending',
+                    'payment_date' => $status === 'completed' ? $apptTime : null,
+                    'created_at' => $apptTime,
+                ]);
+            }
         }
     }
 }
