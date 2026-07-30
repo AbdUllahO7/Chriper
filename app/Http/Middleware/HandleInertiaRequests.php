@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -30,6 +31,24 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user = $request->user();
+        $notificationData = ['unreadCount' => 0, 'latest' => []];
+
+        if ($user) {
+            try {
+                if (Schema::hasTable('notifications')) {
+                    $notificationData = [
+                        'unreadCount' => \App\Models\Notification::whereNull('read_at')->count(),
+                        'latest' => \App\Models\Notification::with('patient')
+                            ->whereNull('read_at')
+                            ->latest('scheduled_at')
+                            ->take(5)
+                            ->get(),
+                    ];
+                }
+            } catch (\Throwable $e) {
+                $notificationData = ['unreadCount' => 0, 'latest' => []];
+            }
+        }
 
         return [
             ...parent::share($request),
@@ -43,15 +62,7 @@ class HandleInertiaRequests extends Middleware
                     'email_verified_at' => $user->email_verified_at,
                 ] : null,
             ],
-            'notifications' => $user ? [
-                'unreadCount' => \App\Models\Notification::whereNull('read_at')->count(),
-                'latest' => \App\Models\Notification::with('patient')
-                    ->whereNull('read_at')
-                    ->latest('scheduled_at')
-                    ->take(5)
-                    ->get(),
-            ] : null,
+            'notifications' => $user ? $notificationData : null,
         ];
     }
-
 }
