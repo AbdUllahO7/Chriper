@@ -223,5 +223,9 @@ class DatabaseSeeder extends Seeder
             'payment_date' => Carbon::now()->subDays(1),
             'notes' => 'Exact cash payment.',
         ]);
+
+        // 6. Clinic Settings
+        \App\Models\ClinicSetting::current();
     }
 }
+
