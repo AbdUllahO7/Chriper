@@ -147,8 +147,61 @@ export default function Authenticated({
                             </div>
                         </div>
 
-                        {/* Right Quick Actions & User Profile Menu */}
+                        {/* Right Quick Actions, Notifications & User Profile Menu */}
                         <div className="hidden lg:flex lg:items-center lg:gap-3">
+                            {/* Notification Bell Dropdown Widget */}
+                            <Dropdown>
+                                <Dropdown.Trigger>
+                                    <button
+                                        type="button"
+                                        className="relative p-2 rounded-xl bg-white/[0.04] text-gray-300 hover:text-white hover:bg-white/10 border border-white/10 transition-all"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                        </svg>
+                                        {(usePage().props as any).notifications?.unreadCount > 0 && (
+                                            <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-purple-600 text-white font-bold text-[10px] flex items-center justify-center ring-2 ring-[#0b0f19] animate-pulse">
+                                                {(usePage().props as any).notifications?.unreadCount}
+                                            </span>
+                                        )}
+                                    </button>
+                                </Dropdown.Trigger>
+                                <Dropdown.Content width="80" align="right">
+                                    <div className="p-3 border-b border-white/10 flex items-center justify-between">
+                                        <span className="text-xs font-bold text-white">Clinical Reminders & Alerts</span>
+                                        <Link href={route('notifications.index')} className="text-[11px] font-bold text-purple-400 hover:text-purple-300">
+                                            View All →
+                                        </Link>
+                                    </div>
+                                    <div className="divide-y divide-white/5 max-h-64 overflow-y-auto">
+                                        {((usePage().props as any).notifications?.latest || []).length === 0 ? (
+                                            <div className="p-4 text-center text-xs text-gray-500">
+                                                No unread reminders.
+                                            </div>
+                                        ) : (
+                                            ((usePage().props as any).notifications?.latest || []).map((notif: any) => (
+                                                <Link
+                                                    key={notif.id}
+                                                    href={notif.action_url || route('notifications.index')}
+                                                    className="p-3 block hover:bg-white/[0.04] transition-colors"
+                                                >
+                                                    <span className="font-bold text-xs text-white block">
+                                                        {notif.type === 'appointment_reminder' && '📅 '}
+                                                        {notif.type === 'payment_reminder' && '💳 '}
+                                                        {notif.type === 'birthday_reminder' && '🎂 '}
+                                                        {notif.type === 'followup_reminder' && '🩺 '}
+                                                        {notif.title}
+                                                    </span>
+                                                    <span className="text-[11px] text-gray-400 block line-clamp-2 mt-0.5">
+                                                        {notif.message}
+                                                    </span>
+                                                </Link>
+                                            ))
+                                        )}
+                                    </div>
+                                </Dropdown.Content>
+                            </Dropdown>
+
                             {/* Quick Action Button Dropdown */}
                             <Dropdown>
                                 <Dropdown.Trigger>
@@ -177,6 +230,7 @@ export default function Authenticated({
                                     </Dropdown.Link>
                                 </Dropdown.Content>
                             </Dropdown>
+
 
                             {/* User Profile Pill Menu */}
                             <Dropdown>
