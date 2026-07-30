@@ -7,6 +7,7 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TreatmentSessionController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureHasRole;
@@ -58,6 +59,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/invoices/{invoice}', [BillingController::class, 'showInvoice'])->name('invoices.show');
     Route::delete('/invoices/{invoice}', [BillingController::class, 'destroyInvoice'])->name('invoices.destroy');
     Route::post('/invoices/{invoice}/record-payment', [BillingController::class, 'recordPayment'])->name('invoices.record-payment');
+
+    // Analytics & Reports Module Routes
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export/csv', [ReportController::class, 'exportCsv'])->name('reports.export.csv');
+    Route::get('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
 
     // Admin User Management Routes
     Route::middleware(EnsureHasRole::class . ':admin')->prefix('admin')->name('admin.')->group(function () {
