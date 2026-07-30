@@ -57,7 +57,7 @@ const Content = ({
     children,
 }: PropsWithChildren<{
     align?: 'left' | 'right';
-    width?: '48';
+    width?: '48' | '80' | '96' | string;
     contentClasses?: string;
 }>) => {
     const { open, setOpen } = useContext(DropDownContext);
@@ -70,10 +70,12 @@ const Content = ({
         alignmentClasses = 'ltr:origin-top-right rtl:origin-top-left end-0';
     }
 
-    let widthClasses = '';
+    let widthClasses = 'w-48';
 
-    if (width === '48') {
-        widthClasses = 'w-48';
+    if (width === '80') {
+        widthClasses = 'w-80';
+    } else if (width === '96') {
+        widthClasses = 'w-96';
     }
 
     return (
@@ -88,12 +90,12 @@ const Content = ({
                 leaveTo="opacity-0 scale-95"
             >
                 <div
-                    className={`absolute z-50 mt-2 rounded-2xl shadow-2xl ${alignmentClasses} ${widthClasses}`}
+                    className={`absolute z-50 mt-2 rounded-2xl shadow-2xl overflow-hidden ${alignmentClasses} ${widthClasses}`}
                     onClick={() => setOpen(false)}
                 >
                     <div
                         className={
-                            `rounded-2xl overflow-hidden ` +
+                            `rounded-2xl ring-1 ring-black ring-opacity-5 ` +
                             contentClasses
                         }
                     >
@@ -114,7 +116,7 @@ const DropdownLink = ({
         <Link
             {...props}
             className={
-                'block w-full px-4 py-2.5 text-start text-sm leading-5 text-gray-200 transition duration-150 ease-in-out hover:bg-white/10 hover:text-white focus:outline-none ' +
+                'block w-full px-4 py-2 text-start text-xs font-semibold leading-5 text-gray-300 transition duration-150 ease-in-out hover:bg-white/10 hover:text-white focus:outline-none ' +
                 className
             }
         >

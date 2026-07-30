@@ -139,7 +139,7 @@ class ReportController extends Controller
         $startDate = $dateFilter['start'];
         $endDate = $dateFilter['end'];
 
-        $fileName = "chirper_report_{$type}_" . date('Y-m-d') . ".csv";
+        $fileName = "chirper_report_{$type}_".date('Y-m-d').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',

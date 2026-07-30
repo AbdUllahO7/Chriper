@@ -43,6 +43,15 @@ class HandleInertiaRequests extends Middleware
                     'email_verified_at' => $user->email_verified_at,
                 ] : null,
             ],
+            'notifications' => $user ? [
+                'unreadCount' => \App\Models\Notification::whereNull('read_at')->count(),
+                'latest' => \App\Models\Notification::with('patient')
+                    ->whereNull('read_at')
+                    ->latest('scheduled_at')
+                    ->take(5)
+                    ->get(),
+            ] : null,
         ];
     }
+
 }

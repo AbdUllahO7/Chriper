@@ -7,6 +7,7 @@ use App\Models\Doctor;
 use App\Models\Invoice;
 use App\Models\MedicalRecord;
 use App\Models\MedicalRecordAttachment;
+use App\Models\Notification;
 use App\Models\Patient;
 use App\Models\Payment;
 use App\Models\TreatmentSession;
@@ -137,7 +138,7 @@ class DatabaseSeeder extends Seeder
             'recommendations' => 'Apply ice pack 15 mins. Cat-cow stretches.',
         ]);
 
-        // 5. Seed Invoices & Payments (Cash, Card, Insurance)
+        // 5. Seed Invoices & Payments
         $inv1 = Invoice::create([
             'invoice_number' => 'INV-2026-001',
             'patient_id' => $createdPatients[0]->id,
@@ -185,43 +186,48 @@ class DatabaseSeeder extends Seeder
             'notes' => 'Insurance claim pending balance.',
         ]);
 
-        Payment::create([
-            'invoice_id' => $inv2->id,
-            'patient_id' => $createdPatients[1]->id,
-            'amount' => 200.00,
-            'payment_method' => 'insurance',
-            'reference_number' => 'INS-CLAIM-AETNA-8812',
-            'status' => 'completed',
-            'payment_date' => Carbon::now()->subDays(3),
-            'notes' => 'Aetna Healthcare claim coverage payout.',
-        ]);
-
-        $inv3 = Invoice::create([
-            'invoice_number' => 'INV-2026-003',
-            'patient_id' => $createdPatients[2]->id,
-            'doctor_id' => $doctors[0]->id,
-            'issue_date' => Carbon::now()->subDays(1),
-            'due_date' => Carbon::now()->addDays(29),
-            'subtotal' => 120.00,
-            'tax' => 0.00,
-            'total_amount' => 120.00,
-            'amount_paid' => 120.00,
-            'status' => 'paid',
-            'line_items' => [
-                ['description' => 'Postural Rehabilitation & Sciatica Care', 'qty' => 1, 'unit_price' => 120.00, 'total' => 120.00],
+        // 6. Seed Notifications (All 4 categories)
+        $sampleNotifications = [
+            [
+                'patient_id' => $createdPatients[0]->id,
+                'type' => 'appointment_reminder',
+                'title' => 'Upcoming Chiropractic Session Tomorrow',
+                'message' => 'Reminder: Robert Martinez has an appointment scheduled tomorrow at 10:30 AM with Dr. Marcus Wright.',
+                'scheduled_at' => Carbon::now()->addHours(24),
+                'action_url' => '/appointments',
+                'read_at' => null,
             ],
-            'notes' => 'Paid in cash.',
-        ]);
+            [
+                'patient_id' => $createdPatients[1]->id,
+                'type' => 'payment_reminder',
+                'title' => 'Payment Due: Invoice #INV-2026-002',
+                'message' => 'Emily Watson has a remaining balance of $120.00 due on Invoice #INV-2026-002.',
+                'scheduled_at' => Carbon::now()->subHours(2),
+                'action_url' => '/billing',
+                'read_at' => null,
+            ],
+            [
+                'patient_id' => $createdPatients[0]->id,
+                'type' => 'birthday_reminder',
+                'title' => '🎂 Happy Birthday Robert Martinez!',
+                'message' => 'Today is Robert Martinez\'s birthday! Send them birthday greetings and milestone care voucher.',
+                'scheduled_at' => Carbon::now(),
+                'action_url' => '/patients/' . $createdPatients[0]->id,
+                'read_at' => null,
+            ],
+            [
+                'patient_id' => $createdPatients[2]->id,
+                'type' => 'followup_reminder',
+                'title' => 'Post-Adjustment 7-Day Care Follow-up',
+                'message' => '7 days since Lumbar Decompression for Michael Chang. Check in on posture exercise progress.',
+                'scheduled_at' => Carbon::now()->subDays(1),
+                'action_url' => '/treatment-sessions',
+                'read_at' => null,
+            ],
+        ];
 
-        Payment::create([
-            'invoice_id' => $inv3->id,
-            'patient_id' => $createdPatients[2]->id,
-            'amount' => 120.00,
-            'payment_method' => 'cash',
-            'reference_number' => 'CASH-RECEIPT-1029',
-            'status' => 'completed',
-            'payment_date' => Carbon::now()->subDays(1),
-            'notes' => 'Exact cash payment.',
-        ]);
+        foreach ($sampleNotifications as $notif) {
+            Notification::create($notif);
+        }
     }
 }
