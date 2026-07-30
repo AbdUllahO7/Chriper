@@ -6,6 +6,7 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TreatmentSessionController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureHasRole;
 use Illuminate\Foundation\Application;
@@ -46,6 +47,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Medical Records Module Routes
     Route::resource('medical-records', MedicalRecordController::class);
+
+    // Treatment Sessions Module Routes
+    Route::resource('treatment-sessions', TreatmentSessionController::class);
 
     // Admin User Management Routes
     Route::middleware(EnsureHasRole::class . ':admin')->prefix('admin')->name('admin.')->group(function () {

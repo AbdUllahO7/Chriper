@@ -17,13 +17,21 @@ interface MedicalRecordItem {
     diagnosis: string | null;
     record_date: string;
     doctor?: { name: string };
-    attachments?: Array<{ id: number; file_name: string; file_type: string; file_url: string }>;
+}
+
+interface TreatmentSessionRecord {
+    id: number;
+    treatment_type: string;
+    session_date: string;
+    adjustment_areas: string[] | null;
+    doctor?: { name: string };
 }
 
 interface ShowProps {
     patient: Patient & {
         appointments: AppointmentRecord[];
         medicalRecords?: MedicalRecordItem[];
+        treatmentSessions?: TreatmentSessionRecord[];
     };
 }
 
@@ -44,7 +52,7 @@ export default function Show({ patient }: ShowProps) {
                                 Patient <span className="gradient-text">Dossier</span>
                             </h1>
                             <p className="text-sm text-gray-400">
-                                Detailed medical record and appointment history for {patient.full_name}.
+                                Comprehensive medical record, treatment sessions, and visit history for {patient.full_name}.
                             </p>
                         </div>
                     </div>
@@ -105,13 +113,65 @@ export default function Show({ patient }: ShowProps) {
                     </div>
                 </div>
 
-                {/* Right Details & Clinical History Column */}
+                {/* Right Details, Medical Records & Treatment History Column */}
                 <div className="lg:col-span-2 space-y-6">
+                    {/* Treatment Sessions Section */}
+                    <div className="glass-card rounded-3xl p-8 border border-white/10 shadow-2xl space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-bold text-white">Chiropractic Treatment Sessions</h3>
+                                <span className="text-xs text-purple-400">Spinal region adjustments & care notes</span>
+                            </div>
+                            <span className="text-xs text-purple-300 font-mono">
+                                {patient.treatmentSessions?.length || 0} sessions
+                            </span>
+                        </div>
+
+                        <div className="space-y-3">
+                            {!patient.treatmentSessions || patient.treatmentSessions.length === 0 ? (
+                                <p className="text-xs text-gray-500 py-4 text-center">No treatment sessions logged yet.</p>
+                            ) : (
+                                patient.treatmentSessions.map((sess) => (
+                                    <div
+                                        key={sess.id}
+                                        className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-purple-500/40 transition-colors"
+                                    >
+                                        <div className="space-y-1">
+                                            <span className="font-extrabold text-white text-sm block">
+                                                {sess.treatment_type}
+                                            </span>
+                                            <div className="flex flex-wrap gap-1 mt-1">
+                                                {sess.adjustment_areas?.map((area, idx) => (
+                                                    <span
+                                                        key={idx}
+                                                        className="px-2 py-0.5 rounded bg-purple-500/10 text-[10px] font-mono text-purple-200 border border-purple-500/20"
+                                                    >
+                                                        {area}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                            <span className="text-[11px] text-gray-400 block font-mono mt-1">
+                                                {new Date(sess.session_date).toLocaleString()} • {sess.doctor?.name}
+                                            </span>
+                                        </div>
+
+                                        <Link
+                                            href={route('treatment-sessions.show', sess.id)}
+                                            className="px-3.5 py-1.5 rounded-xl bg-purple-600/20 text-purple-300 hover:bg-purple-600/40 text-xs font-bold transition-colors shrink-0"
+                                        >
+                                            View Report
+                                        </Link>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+
                     {/* Clinical Medical Records */}
                     <div className="glass-card rounded-3xl p-8 border border-purple-500/30 shadow-2xl space-y-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h3 className="text-lg font-bold text-white">Clinical Medical Records (9 Sections)</h3>
+                                <h3 className="text-lg font-bold text-white">Clinical Medical Records</h3>
                                 <span className="text-xs text-purple-400">Past diagnoses, 1-10 pain levels & attachments</span>
                             </div>
                             <span className="text-xs text-purple-300 font-mono">
@@ -137,9 +197,6 @@ export default function Show({ patient }: ShowProps) {
                                                     Diagnosis: {rec.diagnosis}
                                                 </span>
                                             )}
-                                            <span className="text-[11px] text-gray-400 block font-mono">
-                                                Exam Date: {new Date(rec.record_date).toLocaleDateString()} • {rec.doctor?.name}
-                                            </span>
                                         </div>
 
                                         <div className="flex items-center gap-3 shrink-0">
@@ -162,50 +219,6 @@ export default function Show({ patient }: ShowProps) {
                                                 Open Dossier
                                             </Link>
                                         </div>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Appointment History */}
-                    <div className="glass-card rounded-3xl p-8 border border-white/10 shadow-2xl space-y-4">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-bold text-white">Appointment Visit History</h3>
-                            <span className="text-xs text-purple-400 font-mono">
-                                {patient.appointments?.length || 0} visits recorded
-                            </span>
-                        </div>
-
-                        <div className="space-y-3">
-                            {!patient.appointments || patient.appointments.length === 0 ? (
-                                <p className="text-xs text-gray-500 py-4 text-center">No appointment visits recorded yet.</p>
-                            ) : (
-                                patient.appointments.map((appt) => (
-                                    <div
-                                        key={appt.id}
-                                        className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-between hover:bg-white/[0.05] transition-colors"
-                                    >
-                                        <div>
-                                            <span className="font-bold text-white text-sm block">
-                                                {appt.service_type}
-                                            </span>
-                                            <span className="text-xs text-gray-400">
-                                                {appt.chiropractor?.name || 'Staff Chiropractor'} • {new Date(appt.appointment_date).toLocaleString()}
-                                            </span>
-                                        </div>
-
-                                        <span
-                                            className={`px-3 py-1 rounded-full text-xs font-bold border capitalize ${
-                                                appt.status === 'completed'
-                                                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                                                    : appt.status === 'scheduled'
-                                                    ? 'bg-blue-500/20 text-blue-300 border-blue-500/30'
-                                                    : 'bg-red-500/20 text-red-300 border-red-500/30'
-                                            }`}
-                                        >
-                                            {appt.status}
-                                        </span>
                                     </div>
                                 ))
                             )}

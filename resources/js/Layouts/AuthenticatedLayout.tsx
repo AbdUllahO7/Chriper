@@ -83,6 +83,18 @@ export default function Authenticated({
                                     Medical Records
                                 </Link>
 
+                                <Link
+                                    href={route('treatment-sessions.index')}
+                                    className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                                        route().current('treatment-sessions.*')
+                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/30'
+                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    }`}
+                                >
+                                    Treatment Sessions
+                                </Link>
+
+
 
 
                                 {user.role === 'admin' && (

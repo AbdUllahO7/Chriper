@@ -46,6 +46,11 @@ class Patient extends Model
         return $this->hasMany(MedicalRecord::class);
     }
 
+    public function treatmentSessions(): HasMany
+    {
+        return $this->hasMany(TreatmentSession::class);
+    }
+
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
