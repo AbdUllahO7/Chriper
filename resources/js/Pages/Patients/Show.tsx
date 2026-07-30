@@ -27,11 +27,22 @@ interface TreatmentSessionRecord {
     doctor?: { name: string };
 }
 
+interface InvoiceRecord {
+    id: number;
+    invoice_number: string;
+    issue_date: string;
+    total_amount: number;
+    amount_paid: number;
+    balance_due: number;
+    status: 'unpaid' | 'partially_paid' | 'paid' | 'overdue';
+}
+
 interface ShowProps {
     patient: Patient & {
         appointments: AppointmentRecord[];
         medicalRecords?: MedicalRecordItem[];
         treatmentSessions?: TreatmentSessionRecord[];
+        invoices?: InvoiceRecord[];
     };
 }
 
@@ -52,7 +63,7 @@ export default function Show({ patient }: ShowProps) {
                                 Patient <span className="gradient-text">Dossier</span>
                             </h1>
                             <p className="text-sm text-gray-400">
-                                Comprehensive medical record, treatment sessions, and visit history for {patient.full_name}.
+                                Medical records, treatment history, and billing invoices for {patient.full_name}.
                             </p>
                         </div>
                     </div>
@@ -113,8 +124,64 @@ export default function Show({ patient }: ShowProps) {
                     </div>
                 </div>
 
-                {/* Right Details, Medical Records & Treatment History Column */}
+                {/* Right History Column */}
                 <div className="lg:col-span-2 space-y-6">
+                    {/* Invoices & Financial Billing History */}
+                    <div className="glass-card rounded-3xl p-8 border border-white/10 shadow-2xl space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-bold text-white">Billing Invoices & Receipts</h3>
+                                <span className="text-xs text-purple-400">Patient invoice history & payment status</span>
+                            </div>
+                            <span className="text-xs text-purple-300 font-mono">
+                                {patient.invoices?.length || 0} invoices
+                            </span>
+                        </div>
+
+                        <div className="space-y-3">
+                            {!patient.invoices || patient.invoices.length === 0 ? (
+                                <p className="text-xs text-gray-500 py-4 text-center">No invoices issued yet.</p>
+                            ) : (
+                                patient.invoices.map((inv) => (
+                                    <div
+                                        key={inv.id}
+                                        className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-between hover:border-purple-500/40 transition-colors"
+                                    >
+                                        <div>
+                                            <span className="font-mono font-bold text-purple-300 text-sm block">
+                                                {inv.invoice_number}
+                                            </span>
+                                            <span className="text-xs text-gray-400 block">
+                                                Issue Date: {inv.issue_date} • Total: ${inv.total_amount.toFixed(2)}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center gap-3">
+                                            <span
+                                                className={`px-3 py-1 rounded-full text-xs font-bold border capitalize ${
+                                                    inv.status === 'paid'
+                                                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                                                        : inv.status === 'partially_paid'
+                                                        ? 'bg-blue-500/20 text-blue-300 border-blue-500/30'
+                                                        : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                                                }`}
+                                            >
+                                                {inv.status.replace('_', ' ')}
+                                            </span>
+
+                                            <Link
+                                                href={route('invoices.show', inv.id)}
+                                                className="px-3 py-1.5 rounded-xl bg-white/5 text-purple-300 hover:bg-purple-600/20 text-xs font-bold transition-colors"
+                                            >
+                                                🖨️ Print PDF
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+
                     {/* Treatment Sessions Section */}
                     <div className="glass-card rounded-3xl p-8 border border-white/10 shadow-2xl space-y-4">
                         <div className="flex items-center justify-between">
@@ -134,91 +201,23 @@ export default function Show({ patient }: ShowProps) {
                                 patient.treatmentSessions.map((sess) => (
                                     <div
                                         key={sess.id}
-                                        className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-purple-500/40 transition-colors"
+                                        className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-purple-500/40 transition-colors"
                                     >
                                         <div className="space-y-1">
                                             <span className="font-extrabold text-white text-sm block">
                                                 {sess.treatment_type}
                                             </span>
-                                            <div className="flex flex-wrap gap-1 mt-1">
-                                                {sess.adjustment_areas?.map((area, idx) => (
-                                                    <span
-                                                        key={idx}
-                                                        className="px-2 py-0.5 rounded bg-purple-500/10 text-[10px] font-mono text-purple-200 border border-purple-500/20"
-                                                    >
-                                                        {area}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                            <span className="text-[11px] text-gray-400 block font-mono mt-1">
+                                            <span className="text-[11px] text-gray-400 block font-mono">
                                                 {new Date(sess.session_date).toLocaleString()} • {sess.doctor?.name}
                                             </span>
                                         </div>
 
                                         <Link
                                             href={route('treatment-sessions.show', sess.id)}
-                                            className="px-3.5 py-1.5 rounded-xl bg-purple-600/20 text-purple-300 hover:bg-purple-600/40 text-xs font-bold transition-colors shrink-0"
+                                            className="px-3 py-1.5 rounded-xl bg-purple-600/20 text-purple-300 hover:bg-purple-600/40 text-xs font-bold transition-colors shrink-0"
                                         >
                                             View Report
                                         </Link>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Clinical Medical Records */}
-                    <div className="glass-card rounded-3xl p-8 border border-purple-500/30 shadow-2xl space-y-4">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="text-lg font-bold text-white">Clinical Medical Records</h3>
-                                <span className="text-xs text-purple-400">Past diagnoses, 1-10 pain levels & attachments</span>
-                            </div>
-                            <span className="text-xs text-purple-300 font-mono">
-                                {patient.medicalRecords?.length || 0} records
-                            </span>
-                        </div>
-
-                        <div className="space-y-3">
-                            {!patient.medicalRecords || patient.medicalRecords.length === 0 ? (
-                                <p className="text-xs text-gray-500 py-4 text-center">No clinical medical records filed yet.</p>
-                            ) : (
-                                patient.medicalRecords.map((rec) => (
-                                    <div
-                                        key={rec.id}
-                                        className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-purple-500/40 transition-colors"
-                                    >
-                                        <div className="space-y-1">
-                                            <span className="font-extrabold text-white text-sm block">
-                                                {rec.chief_complaint}
-                                            </span>
-                                            {rec.diagnosis && (
-                                                <span className="text-xs text-purple-300 font-medium block">
-                                                    Diagnosis: {rec.diagnosis}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        <div className="flex items-center gap-3 shrink-0">
-                                            <span
-                                                className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                                                    rec.pain_level <= 3
-                                                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                                                        : rec.pain_level <= 6
-                                                        ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-                                                        : 'bg-red-500/20 text-red-300 border-red-500/30'
-                                                }`}
-                                            >
-                                                Pain: {rec.pain_level} / 10
-                                            </span>
-
-                                            <Link
-                                                href={route('medical-records.show', rec.id)}
-                                                className="px-3.5 py-1.5 rounded-xl bg-purple-600/20 text-purple-300 hover:bg-purple-600/40 text-xs font-bold transition-colors"
-                                            >
-                                                Open Dossier
-                                            </Link>
-                                        </div>
                                     </div>
                                 ))
                             )}

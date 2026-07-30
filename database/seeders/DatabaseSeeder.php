@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Appointment;
 use App\Models\Doctor;
+use App\Models\Invoice;
 use App\Models\MedicalRecord;
 use App\Models\MedicalRecordAttachment;
 use App\Models\Patient;
@@ -101,7 +102,7 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // 4. Seed Medical Records
+        // 4. Seed Medical Record & Treatment Session
         $clinicalRecord = MedicalRecord::create([
             'patient_id' => $createdPatients[0]->id,
             'doctor_id' => $doctors[0]->id,
@@ -126,30 +127,101 @@ class DatabaseSeeder extends Seeder
             'file_size' => 2450000,
         ]);
 
-        // 5. Seed Treatment Sessions
-        $sessions = [
-            [
-                'patient_id' => $createdPatients[0]->id,
-                'doctor_id' => $doctors[0]->id,
-                'session_date' => Carbon::now()->subDays(1)->setHour(10)->setMinute(30),
-                'treatment_type' => 'Lumbar Decompression & Pelvic Alignment',
-                'adjustment_areas' => ['Lumbar L4-L5', 'Lumbar L5-S1', 'Pelvic / SI Joint'],
-                'notes' => 'Performed 15-minute lumbar mechanical decompression traction. Applied high-velocity low-amplitude (HVLA) thrust to right sacroiliac joint.',
-                'recommendations' => "1. Apply ice pack to lower lumbar region for 15 minutes twice daily.\n2. Perform gentle cat-cow spinal flexions 10 reps in morning.\n3. Avoid heavy lifting (>15 lbs) for 48 hours.",
-            ],
-            [
-                'patient_id' => $createdPatients[1]->id,
-                'doctor_id' => $doctors[1]->id,
-                'session_date' => Carbon::now()->subDays(3)->setHour(14)->setMinute(00),
-                'treatment_type' => 'Cervical Spine Mobilization & Myofascial Release',
-                'adjustment_areas' => ['Cervical C1-C2', 'Cervical C5-C7', 'Thoracic T1-T4'],
-                'notes' => 'Suboccipital myofascial release performed for 10 minutes. Cervical spine rotation alignment applied bilaterally.',
-                'recommendations' => "1. Perform chin tuck posture exercises 3 sets of 10 daily.\n2. Maintain ergonomic monitor height at eye level at work desk.\n3. Hydrate with 2.5L water daily to support tissue recovery.",
-            ],
-        ];
+        TreatmentSession::create([
+            'patient_id' => $createdPatients[0]->id,
+            'doctor_id' => $doctors[0]->id,
+            'session_date' => Carbon::now()->subDays(1)->setHour(10)->setMinute(30),
+            'treatment_type' => 'Lumbar Decompression & Pelvic Alignment',
+            'adjustment_areas' => ['Lumbar L4-L5', 'Lumbar L5-S1', 'Pelvic / SI Joint'],
+            'notes' => '15-minute lumbar mechanical decompression. Sacroiliac joint adjustment.',
+            'recommendations' => 'Apply ice pack 15 mins. Cat-cow stretches.',
+        ]);
 
-        foreach ($sessions as $sData) {
-            TreatmentSession::create($sData);
-        }
+        // 5. Seed Invoices & Payments (Cash, Card, Insurance)
+        $inv1 = Invoice::create([
+            'invoice_number' => 'INV-2026-001',
+            'patient_id' => $createdPatients[0]->id,
+            'doctor_id' => $doctors[0]->id,
+            'issue_date' => Carbon::now()->subDays(5),
+            'due_date' => Carbon::now()->addDays(25),
+            'subtotal' => 250.00,
+            'tax' => 0.00,
+            'total_amount' => 250.00,
+            'amount_paid' => 250.00,
+            'status' => 'paid',
+            'line_items' => [
+                ['description' => 'Initial Chiropractic Consultation & Spinal Exam', 'qty' => 1, 'unit_price' => 150.00, 'total' => 150.00],
+                ['description' => 'Lumbar Mechanical Decompression Session', 'qty' => 1, 'unit_price' => 100.00, 'total' => 100.00],
+            ],
+            'notes' => 'Paid in full at reception desk.',
+        ]);
+
+        Payment::create([
+            'invoice_id' => $inv1->id,
+            'patient_id' => $createdPatients[0]->id,
+            'amount' => 250.00,
+            'payment_method' => 'card',
+            'reference_number' => 'CARD-AUTH-94812',
+            'status' => 'completed',
+            'payment_date' => Carbon::now()->subDays(5),
+            'notes' => 'Visa ending in 4242',
+        ]);
+
+        $inv2 = Invoice::create([
+            'invoice_number' => 'INV-2026-002',
+            'patient_id' => $createdPatients[1]->id,
+            'doctor_id' => $doctors[1]->id,
+            'issue_date' => Carbon::now()->subDays(3),
+            'due_date' => Carbon::now()->addDays(27),
+            'subtotal' => 320.00,
+            'tax' => 0.00,
+            'total_amount' => 320.00,
+            'amount_paid' => 200.00,
+            'status' => 'partially_paid',
+            'line_items' => [
+                ['description' => 'Cervical Spine Adjustment & Myofascial Release', 'qty' => 1, 'unit_price' => 120.00, 'total' => 120.00],
+                ['description' => 'Digital Spine X-Ray Diagnostic Scan', 'qty' => 1, 'unit_price' => 200.00, 'total' => 200.00],
+            ],
+            'notes' => 'Insurance claim pending balance.',
+        ]);
+
+        Payment::create([
+            'invoice_id' => $inv2->id,
+            'patient_id' => $createdPatients[1]->id,
+            'amount' => 200.00,
+            'payment_method' => 'insurance',
+            'reference_number' => 'INS-CLAIM-AETNA-8812',
+            'status' => 'completed',
+            'payment_date' => Carbon::now()->subDays(3),
+            'notes' => 'Aetna Healthcare claim coverage payout.',
+        ]);
+
+        $inv3 = Invoice::create([
+            'invoice_number' => 'INV-2026-003',
+            'patient_id' => $createdPatients[2]->id,
+            'doctor_id' => $doctors[0]->id,
+            'issue_date' => Carbon::now()->subDays(1),
+            'due_date' => Carbon::now()->addDays(29),
+            'subtotal' => 120.00,
+            'tax' => 0.00,
+            'total_amount' => 120.00,
+            'amount_paid' => 120.00,
+            'status' => 'paid',
+            'line_items' => [
+                ['description' => 'Postural Rehabilitation & Sciatica Care', 'qty' => 1, 'unit_price' => 120.00, 'total' => 120.00],
+            ],
+            'notes' => 'Paid in cash.',
+        ]);
+
+        Payment::create([
+            'invoice_id' => $inv3->id,
+            'patient_id' => $createdPatients[2]->id,
+            'amount' => 120.00,
+            'payment_method' => 'cash',
+            'reference_number' => 'CASH-RECEIPT-1029',
+            'status' => 'completed',
+            'payment_date' => Carbon::now()->subDays(1),
+            'notes' => 'Exact cash payment.',
+        ]);
     }
 }
