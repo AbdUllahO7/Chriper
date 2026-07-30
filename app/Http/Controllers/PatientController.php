@@ -61,6 +61,10 @@ class PatientController extends Controller
             'medicalRecords' => function ($q) {
                 $q->with(['doctor', 'attachments'])->latest('record_date');
             },
+            'treatmentSessions' => function ($q) {
+                $q->with('doctor')->latest('session_date');
+            },
+
             'payments' => function ($q) {
                 $q->latest();
             },

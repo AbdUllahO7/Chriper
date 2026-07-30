@@ -8,6 +8,7 @@ use App\Models\MedicalRecord;
 use App\Models\MedicalRecordAttachment;
 use App\Models\Patient;
 use App\Models\Payment;
+use App\Models\TreatmentSession;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -100,59 +101,55 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // 4. Seed Medical Records with 9 Clinical Sections & Attachments
-        $clinicalRecords = [
+        // 4. Seed Medical Records
+        $clinicalRecord = MedicalRecord::create([
+            'patient_id' => $createdPatients[0]->id,
+            'doctor_id' => $doctors[0]->id,
+            'chief_complaint' => 'Acute lower lumbar spine pain radiating down right leg.',
+            'pain_level' => 8,
+            'medical_history' => 'L4-L5 lumbar strain in 2021.',
+            'current_medications' => 'Ibuprofen 400mg PRN.',
+            'allergies' => 'Penicillin.',
+            'physical_examination' => 'Palpation reveals severe paraspinal muscle spasm around L4-S1.',
+            'diagnosis' => 'L4-L5 Lumbar Disc Herniation with Right Sciatic Radiculopathy.',
+            'treatment_plan' => '3x weekly Spinal Decompression Therapy for 4 weeks.',
+            'progress_notes' => 'Patient reports 30% reduction in numbness following decompression.',
+            'record_date' => Carbon::now()->subDays(2),
+        ]);
+
+        MedicalRecordAttachment::create([
+            'medical_record_id' => $clinicalRecord->id,
+            'file_name' => 'Lumbar_Spine_XRay_AP_Lateral.png',
+            'file_path' => 'medical_records/sample_xray.png',
+            'file_type' => 'xray',
+            'mime_type' => 'image/png',
+            'file_size' => 2450000,
+        ]);
+
+        // 5. Seed Treatment Sessions
+        $sessions = [
             [
                 'patient_id' => $createdPatients[0]->id,
                 'doctor_id' => $doctors[0]->id,
-                'chief_complaint' => 'Acute lower lumbar spine pain radiating down right leg after lifting heavy cargo.',
-                'pain_level' => 8,
-                'medical_history' => 'L4-L5 lumbar strain in 2021. No previous spinal surgeries.',
-                'current_medications' => 'Ibuprofen 400mg PRN for inflammation.',
-                'allergies' => 'Penicillin (mild skin rash reaction).',
-                'physical_examination' => 'Palpation reveals severe paraspinal muscle spasm around L4-S1. Positive Straight Leg Raise test at 45 degrees on right side.',
-                'diagnosis' => 'L4-L5 Lumbar Disc Herniation with Right Sciatic Radiculopathy.',
-                'treatment_plan' => '3x weekly Spinal Decompression Therapy for 4 weeks. Core stabilization physical rehab.',
-                'progress_notes' => 'Patient reports 30% reduction in numbness following initial decompression session.',
-                'record_date' => Carbon::now()->subDays(2),
+                'session_date' => Carbon::now()->subDays(1)->setHour(10)->setMinute(30),
+                'treatment_type' => 'Lumbar Decompression & Pelvic Alignment',
+                'adjustment_areas' => ['Lumbar L4-L5', 'Lumbar L5-S1', 'Pelvic / SI Joint'],
+                'notes' => 'Performed 15-minute lumbar mechanical decompression traction. Applied high-velocity low-amplitude (HVLA) thrust to right sacroiliac joint.',
+                'recommendations' => "1. Apply ice pack to lower lumbar region for 15 minutes twice daily.\n2. Perform gentle cat-cow spinal flexions 10 reps in morning.\n3. Avoid heavy lifting (>15 lbs) for 48 hours.",
             ],
             [
                 'patient_id' => $createdPatients[1]->id,
                 'doctor_id' => $doctors[1]->id,
-                'chief_complaint' => 'Persistent cervical neck stiffness and daily tension headaches originating at suboccipital region.',
-                'pain_level' => 6,
-                'medical_history' => 'Sedentary desk job 9+ hours daily. Cervical strain following minor fender bender 2 years ago.',
-                'current_medications' => 'Acetaminophen 500mg, Magnesium glycinate.',
-                'allergies' => 'No known drug allergies (NKDA).',
-                'physical_examination' => 'Forward head posture +3cm. Reduced cervical lateral rotation (Right: 40 deg, Left: 65 deg). Suboccipital muscle hypertonicity.',
-                'diagnosis' => 'Cervical Spine Dysfunction & Postural Cervicogenic Headache.',
-                'treatment_plan' => 'Cervical spinal manipulation 2x weekly. Ergonomic workplace assessment and postural neck traction.',
-                'progress_notes' => 'Headache frequency reduced from daily to 1-2 per week after 2 weeks of care.',
-                'record_date' => Carbon::now()->subDays(5),
+                'session_date' => Carbon::now()->subDays(3)->setHour(14)->setMinute(00),
+                'treatment_type' => 'Cervical Spine Mobilization & Myofascial Release',
+                'adjustment_areas' => ['Cervical C1-C2', 'Cervical C5-C7', 'Thoracic T1-T4'],
+                'notes' => 'Suboccipital myofascial release performed for 10 minutes. Cervical spine rotation alignment applied bilaterally.',
+                'recommendations' => "1. Perform chin tuck posture exercises 3 sets of 10 daily.\n2. Maintain ergonomic monitor height at eye level at work desk.\n3. Hydrate with 2.5L water daily to support tissue recovery.",
             ],
         ];
 
-        foreach ($clinicalRecords as $recordData) {
-            $record = MedicalRecord::create($recordData);
-
-            // Add sample X-ray attachment record
-            MedicalRecordAttachment::create([
-                'medical_record_id' => $record->id,
-                'file_name' => 'Lumbar_Spine_XRay_AP_Lateral.png',
-                'file_path' => 'medical_records/sample_xray.png',
-                'file_type' => 'xray',
-                'mime_type' => 'image/png',
-                'file_size' => 2450000,
-            ]);
-
-            MedicalRecordAttachment::create([
-                'medical_record_id' => $record->id,
-                'file_name' => 'MRI_Radiology_Report.pdf',
-                'file_path' => 'medical_records/sample_report.pdf',
-                'file_type' => 'pdf',
-                'mime_type' => 'application/pdf',
-                'file_size' => 1200000,
-            ]);
+        foreach ($sessions as $sData) {
+            TreatmentSession::create($sData);
         }
     }
 }
