@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\BillingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\MedicalRecordController;
@@ -50,6 +51,13 @@ Route::middleware(['auth'])->group(function () {
 
     // Treatment Sessions Module Routes
     Route::resource('treatment-sessions', TreatmentSessionController::class);
+
+    // Billing & Invoices Module Routes
+    Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
+    Route::post('/invoices', [BillingController::class, 'storeInvoice'])->name('invoices.store');
+    Route::get('/invoices/{invoice}', [BillingController::class, 'showInvoice'])->name('invoices.show');
+    Route::delete('/invoices/{invoice}', [BillingController::class, 'destroyInvoice'])->name('invoices.destroy');
+    Route::post('/invoices/{invoice}/record-payment', [BillingController::class, 'recordPayment'])->name('invoices.record-payment');
 
     // Admin User Management Routes
     Route::middleware(EnsureHasRole::class . ':admin')->prefix('admin')->name('admin.')->group(function () {

@@ -13,14 +13,18 @@ class Payment extends Model
     protected $fillable = [
         'patient_id',
         'appointment_id',
+        'invoice_id',
         'amount',
+        'payment_method',
+        'reference_number',
         'status',
         'payment_date',
+        'notes',
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
         'payment_date' => 'datetime',
+        'amount' => 'float',
     ];
 
     public function patient(): BelongsTo
@@ -31,5 +35,10 @@ class Payment extends Model
     public function appointment(): BelongsTo
     {
         return $this->belongsTo(Appointment::class);
+    }
+
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
     }
 }

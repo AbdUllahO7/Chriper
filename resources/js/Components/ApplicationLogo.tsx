@@ -1,17 +1,20 @@
-import { SVGAttributes } from 'react';
+import { HTMLAttributes } from 'react';
 
-export default function ApplicationLogo(props: SVGAttributes<SVGElement>) {
+export default function ApplicationLogo(props: HTMLAttributes<HTMLDivElement>) {
     return (
-        <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 p-0.5 shadow-lg shadow-purple-500/25 flex items-center justify-center">
+        <div {...props} className={`flex items-center gap-3 ${props.className || ''}`}>
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-purple-400 p-0.5 shadow-lg shadow-purple-500/30 flex items-center justify-center">
                 <div className="w-full h-full bg-[#0b0f19] rounded-[14px] flex items-center justify-center">
-                    <svg className="w-7 h-7 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
             </div>
-            <span className="text-2xl font-extrabold tracking-tight text-white">
+            <span className="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
                 Chirp<span className="gradient-text">er</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] uppercase font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    Spine
+                </span>
             </span>
         </div>
     );
