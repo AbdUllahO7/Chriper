@@ -258,8 +258,11 @@ export default function Authenticated({
                                         <p className="text-xs font-bold text-white">{user.name}</p>
                                         <p className="text-[11px] text-gray-400 font-mono truncate">{user.email}</p>
                                     </div>
+                                    <Dropdown.Link href={route('settings.edit')}>
+                                        ⚙️ Clinic Settings
+                                    </Dropdown.Link>
                                     <Dropdown.Link href={route('profile.edit')}>
-                                        ⚙️ Account Settings
+                                        👤 Account Settings
                                     </Dropdown.Link>
                                     <Dropdown.Link
                                         href={route('logout')}
@@ -272,6 +275,7 @@ export default function Authenticated({
                                 </Dropdown.Content>
                             </Dropdown>
                         </div>
+
 
                         {/* Hamburger Button for Mobile */}
                         <div className="flex items-center lg:hidden">

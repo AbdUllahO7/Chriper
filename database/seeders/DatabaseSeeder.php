@@ -226,8 +226,19 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
-        foreach ($sampleNotifications as $notif) {
-            Notification::create($notif);
-        }
+        Payment::create([
+            'invoice_id' => $inv3->id,
+            'patient_id' => $createdPatients[2]->id,
+            'amount' => 120.00,
+            'payment_method' => 'cash',
+            'reference_number' => 'CASH-RECEIPT-1029',
+            'status' => 'completed',
+            'payment_date' => Carbon::now()->subDays(1),
+            'notes' => 'Exact cash payment.',
+        ]);
+
+        // 6. Clinic Settings
+        \App\Models\ClinicSetting::current();
     }
 }
+
