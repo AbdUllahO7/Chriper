@@ -67,6 +67,9 @@ class PatientController extends Controller
             'treatmentPlans' => function ($q) {
                 $q->with('doctor')->latest();
             },
+            'consentForms' => function ($q) {
+                $q->latest();
+            },
             'invoices' => function ($q) {
                 $q->with('payments')->latest('issue_date');
             },

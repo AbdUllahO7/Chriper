@@ -51,12 +51,23 @@ interface TreatmentPlanRecord {
     doctor?: { name: string };
 }
 
+interface ConsentFormRecord {
+    id: number;
+    form_type: string;
+    title: string;
+    signer_name: string | null;
+    signature_url: string | null;
+    signed_at: string | null;
+    status: 'pending' | 'signed' | 'declined';
+}
+
 interface ShowProps {
     patient: Patient & {
         appointments: AppointmentRecord[];
         medicalRecords?: MedicalRecordItem[];
         treatmentSessions?: TreatmentSessionRecord[];
         treatmentPlans?: TreatmentPlanRecord[];
+        consentForms?: ConsentFormRecord[];
         invoices?: InvoiceRecord[];
     };
 }
@@ -250,6 +261,62 @@ export default function Show({ patient }: ShowProps) {
                                             className="px-3.5 py-2 rounded-xl bg-purple-600/20 text-purple-300 hover:bg-purple-600/40 text-xs font-bold transition-colors shrink-0"
                                         >
                                             View Checklist →
+                                        </Link>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Digital Consent Forms & E-Signatures */}
+                    <div className="glass-card rounded-3xl p-8 border border-white/10 shadow-2xl space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-bold text-white">Digital Consent Forms & E-Signatures</h3>
+                                <span className="text-xs text-purple-400">Intake documents, HIPAA privacy & signed authorizations</span>
+                            </div>
+                            <span className="text-xs text-purple-300 font-mono">
+                                {patient.consentForms?.length || 0} documents
+                            </span>
+                        </div>
+
+                        <div className="space-y-3">
+                            {!patient.consentForms || patient.consentForms.length === 0 ? (
+                                <p className="text-xs text-gray-500 py-4 text-center">No digital consent forms issued yet.</p>
+                            ) : (
+                                patient.consentForms.map((cf) => (
+                                    <div
+                                        key={cf.id}
+                                        className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-purple-500/40 transition-colors"
+                                    >
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-extrabold text-white text-sm block">
+                                                    {cf.title}
+                                                </span>
+                                                <span
+                                                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase font-mono ${
+                                                        cf.status === 'signed'
+                                                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                                                            : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                                                    }`}
+                                                >
+                                                    {cf.status === 'signed' ? '✓ Signed' : '⏱️ Pending'}
+                                                </span>
+                                            </div>
+
+                                            <span className="text-xs text-gray-400 block font-mono">
+                                                {cf.status === 'signed'
+                                                    ? `Signed by ${cf.signer_name} on ${new Date(cf.signed_at!).toLocaleDateString()}`
+                                                    : 'Awaiting patient electronic signature'}
+                                            </span>
+                                        </div>
+
+                                        <Link
+                                            href={route('consent-forms.show', cf.id)}
+                                            className="px-3.5 py-2 rounded-xl bg-purple-600/20 text-purple-300 hover:bg-purple-600/40 text-xs font-bold transition-colors shrink-0"
+                                        >
+                                            {cf.status === 'signed' ? 'View Signature' : 'Sign Now'}
                                         </Link>
                                     </div>
                                 ))
