@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import ConfirmModal from '@/Components/ConfirmModal';
-import { Head, usePage, router, useForm } from '@inertiajs/react';
+import { Head, Link, usePage, router, useForm } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
 export type AppointmentStatus =
@@ -265,15 +265,24 @@ export default function Index({
                             Interactive calendar with drag & drop rescheduling, daily/weekly views, and live notifications.
                         </p>
                     </div>
-                    <button
-                        onClick={() => setIsBookModalOpen(true)}
-                        className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-sm hover:from-purple-500 hover:to-indigo-500 transition-all shadow-lg shadow-purple-600/25 active:scale-95 flex items-center gap-2"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <span>+ Book Appointment</span>
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href={route('booking.portal')}
+                            className="px-5 py-2.5 rounded-xl bg-purple-600/20 text-purple-300 border border-purple-500/40 hover:bg-purple-600/30 text-sm font-extrabold transition-all shadow-sm flex items-center gap-2"
+                        >
+                            <span>⚡</span>
+                            <span>Online Patient Booking Portal</span>
+                        </Link>
+                        <button
+                            onClick={() => setIsBookModalOpen(true)}
+                            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-sm hover:from-purple-500 hover:to-indigo-500 transition-all shadow-lg shadow-purple-600/25 active:scale-95 flex items-center gap-2"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span>+ Book Appointment</span>
+                        </button>
+                    </div>
                 </div>
             }
         >

@@ -93,6 +93,14 @@ export default function Show({ patient }: ShowProps) {
                             </p>
                         </div>
                     </div>
+
+                    <Link
+                        href={route('booking.portal')}
+                        className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-extrabold text-xs shadow-lg shadow-purple-600/30 hover:from-purple-500 hover:to-indigo-500 transition-all flex items-center gap-2"
+                    >
+                        <span>⚡</span>
+                        <span>Book Online Appointment</span>
+                    </Link>
                 </div>
             }
         >
