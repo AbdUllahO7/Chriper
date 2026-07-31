@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\ClinicSettingController;
+use App\Http\Controllers\ConsentFormController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\MedicalRecordController;
@@ -60,6 +61,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('treatment-plans', TreatmentPlanController::class);
     Route::post('treatment-plans/{treatment_plan}/sessions/{session_number}/toggle', [TreatmentPlanController::class, 'toggleSession'])
         ->name('treatment-plans.toggle-session');
+
+    // Digital Consent Forms Module Routes (E-Signatures)
+    Route::resource('consent-forms', ConsentFormController::class);
+    Route::post('consent-forms/{consent_form}/sign', [ConsentFormController::class, 'sign'])
+        ->name('consent-forms.sign');
 
     // Billing & Invoices Module Routes
     Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');

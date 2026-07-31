@@ -56,6 +56,11 @@ class Patient extends Model
         return $this->hasMany(TreatmentPlan::class);
     }
 
+    public function consentForms(): HasMany
+    {
+        return $this->hasMany(ConsentForm::class);
+    }
+
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
