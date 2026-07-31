@@ -13,6 +13,7 @@ class TreatmentSession extends Model
     protected $fillable = [
         'patient_id',
         'doctor_id',
+        'treatment_plan_id',
         'session_date',
         'treatment_type',
         'adjustment_areas',
@@ -33,5 +34,10 @@ class TreatmentSession extends Model
     public function doctor(): BelongsTo
     {
         return $this->belongsTo(Doctor::class);
+    }
+
+    public function treatmentPlan(): BelongsTo
+    {
+        return $this->belongsTo(TreatmentPlan::class);
     }
 }

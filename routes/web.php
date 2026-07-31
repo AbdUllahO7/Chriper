@@ -10,6 +10,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TreatmentPlanController;
 use App\Http\Controllers\TreatmentSessionController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureHasRole;
@@ -54,6 +55,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Treatment Sessions Module Routes
     Route::resource('treatment-sessions', TreatmentSessionController::class);
+
+    // Treatment Plans Module Routes (Prescribed Multi-Session Plans)
+    Route::resource('treatment-plans', TreatmentPlanController::class);
+    Route::post('treatment-plans/{treatment_plan}/sessions/{session_number}/toggle', [TreatmentPlanController::class, 'toggleSession'])
+        ->name('treatment-plans.toggle-session');
 
     // Billing & Invoices Module Routes
     Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');

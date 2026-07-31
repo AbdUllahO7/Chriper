@@ -40,11 +40,23 @@ interface InvoiceRecord {
     status: 'unpaid' | 'partially_paid' | 'paid' | 'overdue';
 }
 
+interface TreatmentPlanRecord {
+    id: number;
+    title: string;
+    total_sessions: number;
+    completed_sessions: number;
+    completion_percentage: number;
+    remaining_sessions: number;
+    status: 'active' | 'completed' | 'paused' | 'cancelled';
+    doctor?: { name: string };
+}
+
 interface ShowProps {
     patient: Patient & {
         appointments: AppointmentRecord[];
         medicalRecords?: MedicalRecordItem[];
         treatmentSessions?: TreatmentSessionRecord[];
+        treatmentPlans?: TreatmentPlanRecord[];
         invoices?: InvoiceRecord[];
     };
 }
@@ -182,6 +194,63 @@ export default function Show({ patient }: ShowProps) {
                                                 🖨️ Print PDF
                                             </Link>
                                         </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Prescribed Chiropractic Treatment Plans */}
+                    <div className="glass-card rounded-3xl p-8 border border-white/10 shadow-2xl space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-bold text-white">Prescribed Treatment Plans</h3>
+                                <span className="text-xs text-purple-400">Multi-week care programs & completion status</span>
+                            </div>
+                            <span className="text-xs text-purple-300 font-mono">
+                                {patient.treatmentPlans?.length || 0} plans
+                            </span>
+                        </div>
+
+                        <div className="space-y-3">
+                            {!patient.treatmentPlans || patient.treatmentPlans.length === 0 ? (
+                                <p className="text-xs text-gray-500 py-4 text-center">No treatment plans prescribed yet.</p>
+                            ) : (
+                                patient.treatmentPlans.map((plan) => (
+                                    <div
+                                        key={plan.id}
+                                        className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-purple-500/40 transition-colors"
+                                    >
+                                        <div className="space-y-1.5 flex-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-extrabold text-white text-sm block">
+                                                    {plan.title}
+                                                </span>
+                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold border bg-purple-500/20 text-purple-300 border-purple-500/30 uppercase font-mono">
+                                                    {plan.status}
+                                                </span>
+                                            </div>
+
+                                            {/* Mini Progress Bar */}
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-36 bg-slate-900 h-2 rounded-full overflow-hidden border border-white/10">
+                                                    <div
+                                                        className="h-full bg-gradient-to-r from-purple-500 to-indigo-500"
+                                                        style={{ width: `${plan.completion_percentage}%` }}
+                                                    ></div>
+                                                </div>
+                                                <span className="text-xs text-purple-300 font-mono font-bold">
+                                                    {plan.completion_percentage}% ({plan.completed_sessions}/{plan.total_sessions} sessions)
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <Link
+                                            href={route('treatment-plans.show', plan.id)}
+                                            className="px-3.5 py-2 rounded-xl bg-purple-600/20 text-purple-300 hover:bg-purple-600/40 text-xs font-bold transition-colors shrink-0"
+                                        >
+                                            View Checklist →
+                                        </Link>
                                     </div>
                                 ))
                             )}
