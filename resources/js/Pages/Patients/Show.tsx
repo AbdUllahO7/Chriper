@@ -1,4 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import PainHistoryTimeline from '@/Components/PainHistoryTimeline';
+import { PainPoint } from '@/Components/BodyPainDiagram';
 import { Head, Link } from '@inertiajs/react';
 import { Patient } from './Index';
 
@@ -17,6 +19,7 @@ interface MedicalRecordItem {
     diagnosis: string | null;
     record_date: string;
     doctor?: { name: string };
+    pain_diagram_data?: PainPoint[] | null;
 }
 
 interface TreatmentSessionRecord {
@@ -126,6 +129,9 @@ export default function Show({ patient }: ShowProps) {
 
                 {/* Right History Column */}
                 <div className="lg:col-span-2 space-y-6">
+                    {/* Interactive Body Pain History & Progression Timeline */}
+                    <PainHistoryTimeline medicalRecords={patient.medicalRecords || []} />
+
                     {/* Invoices & Financial Billing History */}
                     <div className="glass-card rounded-3xl p-8 border border-white/10 shadow-2xl space-y-4">
                         <div className="flex items-center justify-between">

@@ -24,11 +24,13 @@ class MedicalRecord extends Model
         'treatment_plan',
         'progress_notes',
         'record_date',
+        'pain_diagram_data',
     ];
 
     protected $casts = [
         'record_date' => 'datetime',
         'pain_level' => 'integer',
+        'pain_diagram_data' => 'array',
     ];
 
     public function patient(): BelongsTo
