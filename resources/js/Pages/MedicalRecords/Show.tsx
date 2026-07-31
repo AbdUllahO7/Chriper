@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import BodyPainDiagram from '@/Components/BodyPainDiagram';
 import { Head, Link } from '@inertiajs/react';
 import { MedicalRecordItem } from './Index';
 
@@ -74,6 +75,12 @@ export default function Show({ medicalRecord }: ShowProps) {
                         </div>
                     </div>
                 </div>
+
+                {/* Interactive Anatomical Pain Diagram View */}
+                <BodyPainDiagram
+                    value={medicalRecord.pain_diagram_data || []}
+                    readOnly={true}
+                />
 
                 {/* 9 Clinical Sections Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

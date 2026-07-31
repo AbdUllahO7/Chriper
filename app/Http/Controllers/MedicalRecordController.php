@@ -81,8 +81,13 @@ class MedicalRecordController extends Controller
             'diagnosis' => ['nullable', 'string'],
             'treatment_plan' => ['nullable', 'string'],
             'progress_notes' => ['nullable', 'string'],
+            'pain_diagram_data' => ['nullable'],
             'attachments.*' => ['nullable', 'file', 'max:10240'], // 10MB Max per file
         ]);
+
+        $painDiagram = is_string($request->input('pain_diagram_data')) 
+            ? json_decode($request->input('pain_diagram_data'), true) 
+            : $request->input('pain_diagram_data');
 
         $record = MedicalRecord::create([
             'patient_id' => $validated['patient_id'],
@@ -96,6 +101,7 @@ class MedicalRecordController extends Controller
             'diagnosis' => $validated['diagnosis'] ?? null,
             'treatment_plan' => $validated['treatment_plan'] ?? null,
             'progress_notes' => $validated['progress_notes'] ?? null,
+            'pain_diagram_data' => $painDiagram,
             'record_date' => now(),
         ]);
 
@@ -148,8 +154,15 @@ class MedicalRecordController extends Controller
             'diagnosis' => ['nullable', 'string'],
             'treatment_plan' => ['nullable', 'string'],
             'progress_notes' => ['nullable', 'string'],
+            'pain_diagram_data' => ['nullable'],
             'attachments.*' => ['nullable', 'file', 'max:10240'],
         ]);
+
+        if ($request->has('pain_diagram_data')) {
+            $validated['pain_diagram_data'] = is_string($request->input('pain_diagram_data'))
+                ? json_decode($request->input('pain_diagram_data'), true)
+                : $request->input('pain_diagram_data');
+        }
 
         $medicalRecord->update($validated);
 
