@@ -46,10 +46,14 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('doctors/{doctor}/toggle-availability', [DoctorController::class, 'toggleAvailability'])
         ->name('doctors.toggle-availability');
 
-    // Appointment Scheduling Module Routes
+    // Appointment Scheduling & Online Booking Module Routes
+    Route::get('/booking', [AppointmentController::class, 'bookingPortal'])->name('booking.portal');
+    Route::get('/appointments/available-slots', [AppointmentController::class, 'availableSlots'])->name('appointments.available-slots');
     Route::resource('appointments', AppointmentController::class);
     Route::patch('appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])
         ->name('appointments.reschedule');
+    Route::post('appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])
+        ->name('appointments.cancel');
 
     // Medical Records Module Routes
     Route::resource('medical-records', MedicalRecordController::class);
