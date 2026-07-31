@@ -64,6 +64,9 @@ class PatientController extends Controller
             'treatmentSessions' => function ($q) {
                 $q->with('doctor')->latest('session_date');
             },
+            'treatmentPlans' => function ($q) {
+                $q->with('doctor')->latest();
+            },
             'invoices' => function ($q) {
                 $q->with('payments')->latest('issue_date');
             },

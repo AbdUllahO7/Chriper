@@ -99,6 +99,9 @@ export default function Authenticated({
                                             <Dropdown.Link href={route('medical-records.index')} className="flex items-center gap-2">
                                                 <span>🩺 Medical Records (SOAP)</span>
                                             </Dropdown.Link>
+                                            <Dropdown.Link href={route('treatment-plans.index')} className="flex items-center gap-2">
+                                                <span>📋 Treatment Plans</span>
+                                            </Dropdown.Link>
                                             <Dropdown.Link href={route('treatment-sessions.index')} className="flex items-center gap-2">
                                                 <span>🦴 Treatment Sessions</span>
                                             </Dropdown.Link>
