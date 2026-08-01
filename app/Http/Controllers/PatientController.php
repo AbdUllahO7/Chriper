@@ -70,6 +70,9 @@ class PatientController extends Controller
             'consentForms' => function ($q) {
                 $q->latest();
             },
+            'medicalImages' => function ($q) {
+                $q->latest('scan_date');
+            },
             'invoices' => function ($q) {
                 $q->with('payments')->latest('issue_date');
             },

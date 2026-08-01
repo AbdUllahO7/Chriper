@@ -61,6 +61,15 @@ interface ConsentFormRecord {
     status: 'pending' | 'signed' | 'declined';
 }
 
+interface MedicalImageRecord {
+    id: number;
+    image_type: 'xray' | 'mri' | 'ct_scan';
+    body_region: string;
+    title: string;
+    scan_date: string;
+    file_url: string;
+}
+
 interface ShowProps {
     patient: Patient & {
         appointments: AppointmentRecord[];
@@ -68,6 +77,7 @@ interface ShowProps {
         treatmentSessions?: TreatmentSessionRecord[];
         treatmentPlans?: TreatmentPlanRecord[];
         consentForms?: ConsentFormRecord[];
+        medicalImages?: MedicalImageRecord[];
         invoices?: InvoiceRecord[];
     };
 }
@@ -320,6 +330,61 @@ export default function Show({ patient }: ShowProps) {
                                         </Link>
                                     </div>
                                 ))
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Radiology & Diagnostic Medical Imaging (X-Ray, MRI, CT) */}
+                    <div className="glass-card rounded-3xl p-8 border border-white/10 shadow-2xl space-y-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-bold text-white">Radiology & Diagnostic Scans</h3>
+                                <span className="text-xs text-purple-400">X-Ray, MRI, and CT Scan imaging workstation</span>
+                            </div>
+                            <span className="text-xs text-purple-300 font-mono">
+                                {patient.medicalImages?.length || 0} scans
+                            </span>
+                        </div>
+
+                        <div className="space-y-3">
+                            {!patient.medicalImages || patient.medicalImages.length === 0 ? (
+                                <p className="text-xs text-gray-500 py-4 text-center">No medical imaging scans uploaded yet.</p>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {patient.medicalImages.map((img) => (
+                                        <div
+                                            key={img.id}
+                                            className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center gap-3 hover:border-purple-500/40 transition-colors group"
+                                        >
+                                            <div className="w-16 h-16 rounded-xl bg-black overflow-hidden shrink-0 border border-white/10">
+                                                <img
+                                                    src={img.file_url}
+                                                    alt={img.title}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                                                />
+                                            </div>
+                                            <div className="space-y-1 min-w-0 flex-1">
+                                                <span className="font-extrabold text-white text-xs block truncate">
+                                                    {img.title}
+                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 uppercase">
+                                                        {img.image_type.replace('_', ' ')}
+                                                    </span>
+                                                    <span className="text-[10px] text-gray-400 font-mono">
+                                                        {img.body_region}
+                                                    </span>
+                                                </div>
+                                                <Link
+                                                    href={route('medical-images.show', img.id)}
+                                                    className="text-[11px] text-purple-300 hover:text-purple-200 font-bold block pt-1"
+                                                >
+                                                    Open Workstation 🔍
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                         </div>
                     </div>

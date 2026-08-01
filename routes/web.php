@@ -6,6 +6,7 @@ use App\Http\Controllers\ClinicSettingController;
 use App\Http\Controllers\ConsentFormController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\MedicalImageController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PatientController;
@@ -53,6 +54,10 @@ Route::middleware(['auth'])->group(function () {
 
     // Medical Records Module Routes
     Route::resource('medical-records', MedicalRecordController::class);
+
+    // Diagnostic Radiology & Medical Imaging Routes (X-Ray, MRI, CT Scan)
+    Route::get('medical-images/compare', [MedicalImageController::class, 'compare'])->name('medical-images.compare');
+    Route::resource('medical-images', MedicalImageController::class);
 
     // Treatment Sessions Module Routes
     Route::resource('treatment-sessions', TreatmentSessionController::class);
