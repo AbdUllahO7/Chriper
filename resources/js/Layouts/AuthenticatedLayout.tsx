@@ -140,6 +140,18 @@ export default function Authenticated({
                                 </Link>
 
                                 <Link
+                                    href={route('inventory.index')}
+                                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                                        route().current('inventory.*')
+                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
+                                            : 'text-gray-300 hover:text-white hover:bg-white/5'
+                                    }`}
+                                >
+                                    <span>📦</span>
+                                    <span>Inventory</span>
+                                </Link>
+
+                                <Link
                                     href={route('reports.index')}
                                     className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                                         route().current('reports.*')
