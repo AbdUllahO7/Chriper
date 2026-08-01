@@ -114,15 +114,24 @@ export default function Index({ medicalRecords, patients, doctors, filters }: In
                             Clinical case notes, 9 diagnostic sections, pain scale assessments, and radiology attachments.
                         </p>
                     </div>
-                    <button
-                        onClick={() => setIsCreateModalOpen(true)}
-                        className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-sm hover:from-purple-500 hover:to-indigo-500 transition-all shadow-lg shadow-purple-600/25 active:scale-95 flex items-center gap-2"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span>+ Create Clinical Record</span>
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href={route('ai-assistant.index')}
+                            className="px-4 py-2.5 rounded-xl bg-purple-600/20 text-purple-300 border border-purple-500/40 hover:bg-purple-600/30 text-xs font-extrabold transition-all shadow-sm flex items-center gap-2"
+                        >
+                            <span>✨</span>
+                            <span>AI Assistant</span>
+                        </Link>
+                        <button
+                            onClick={() => setIsCreateModalOpen(true)}
+                            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-sm hover:from-purple-500 hover:to-indigo-500 transition-all shadow-lg shadow-purple-600/25 active:scale-95 flex items-center gap-2"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span>+ Create Clinical Record</span>
+                        </button>
+                    </div>
                 </div>
             }
         >
