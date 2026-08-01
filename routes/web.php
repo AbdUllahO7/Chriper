@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AiClinicalAssistantController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\ClinicSettingController;
@@ -98,6 +99,13 @@ Route::middleware(['auth'])->group(function () {
     // Clinic Settings Module Routes
     Route::get('/settings', [ClinicSettingController::class, 'edit'])->name('settings.edit');
     Route::post('/settings', [ClinicSettingController::class, 'update'])->name('settings.update');
+
+    // AI Clinical Assistant Module Routes
+    Route::get('/ai-assistant', [AiClinicalAssistantController::class, 'index'])->name('ai-assistant.index');
+    Route::post('/ai-assistant/summarize-soap', [AiClinicalAssistantController::class, 'summarizeSoap'])->name('ai-assistant.summarize-soap');
+    Route::post('/ai-assistant/suggest-icd', [AiClinicalAssistantController::class, 'suggestIcd'])->name('ai-assistant.suggest-icd');
+    Route::post('/ai-assistant/draft-plan', [AiClinicalAssistantController::class, 'draftPlan'])->name('ai-assistant.draft-plan');
+    Route::post('/ai-assistant/visit-summary', [AiClinicalAssistantController::class, 'generateVisitSummary'])->name('ai-assistant.visit-summary');
 
     // Admin User Management Routes
     Route::middleware(EnsureHasRole::class . ':admin')->prefix('admin')->name('admin.')->group(function () {
