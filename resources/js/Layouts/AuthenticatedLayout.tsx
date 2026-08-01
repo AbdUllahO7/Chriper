@@ -12,176 +12,190 @@ export default function Authenticated({
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
     const isClinicalActive =
-        route().current('medical-records.*') || route().current('treatment-sessions.*');
+        route().current('medical-records.*') ||
+        route().current('medical-images.*') ||
+        route().current('consent-forms.*') ||
+        route().current('treatment-plans.*') ||
+        route().current('treatment-sessions.*') ||
+        route().current('doctors.*');
+
+    const isPracticeOpsActive =
+        route().current('billing.*') ||
+        route().current('invoices.*') ||
+        route().current('insurance.*') ||
+        route().current('inventory.*') ||
+        route().current('reports.*');
 
     return (
         <div className="min-h-screen bg-[#0b0f19] text-gray-100 font-sans selection:bg-purple-500 selection:text-white">
             {/* Top Navigation Bar */}
             <nav className="glass-nav sticky top-0 z-50 border-b border-white/10 shadow-2xl backdrop-blur-xl">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 items-center justify-between gap-4">
+                    <div className="flex h-16 items-center justify-between gap-2 xl:gap-4">
                         {/* Left Logo */}
-                        <div className="flex items-center gap-6 shrink-0">
-                            <Link href="/" className="hover:opacity-90 transition-opacity">
-                                <ApplicationLogo />
+                        <Link href="/" className="hover:opacity-90 transition-opacity shrink-0">
+                            <ApplicationLogo />
+                        </Link>
+
+                        {/* Main Desktop Navigation Items */}
+                        <div className="hidden lg:flex items-center gap-1 xl:gap-1.5 shrink">
+                            <Link
+                                href={route('dashboard')}
+                                className={`px-2 py-1.5 xl:px-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                                    route().current('dashboard')
+                                        ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
+                                        : 'text-gray-300 hover:text-white hover:bg-white/5'
+                                }`}
+                            >
+                                <span>📊</span>
+                                <span>Dashboard</span>
                             </Link>
 
-                            {/* Main Desktop Navigation Items */}
-                            <div className="hidden lg:flex items-center gap-1.5">
-                                <Link
-                                    href={route('dashboard')}
-                                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                        route().current('dashboard')
-                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
-                                            : 'text-gray-300 hover:text-white hover:bg-white/5'
-                                    }`}
-                                >
-                                    <span>📊</span>
-                                    <span>Dashboard</span>
-                                </Link>
+                            <Link
+                                href={route('appointments.index')}
+                                className={`px-2 py-1.5 xl:px-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                                    route().current('appointments.*')
+                                        ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
+                                        : 'text-gray-300 hover:text-white hover:bg-white/5'
+                                }`}
+                            >
+                                <span>📅</span>
+                                <span className="hidden xl:inline">Appointments</span>
+                                <span className="xl:hidden">Appts</span>
+                            </Link>
 
-                                <Link
-                                    href={route('appointments.index')}
-                                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                        route().current('appointments.*')
-                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
-                                            : 'text-gray-300 hover:text-white hover:bg-white/5'
-                                    }`}
-                                >
-                                    <span>📅</span>
-                                    <span>Appointments</span>
-                                </Link>
+                            <Link
+                                href={route('patients.index')}
+                                className={`px-2 py-1.5 xl:px-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                                    route().current('patients.*')
+                                        ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
+                                        : 'text-gray-300 hover:text-white hover:bg-white/5'
+                                }`}
+                            >
+                                <span>👥</span>
+                                <span>Patients</span>
+                            </Link>
 
-                                <Link
-                                    href={route('patients.index')}
-                                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                        route().current('patients.*')
-                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
-                                            : 'text-gray-300 hover:text-white hover:bg-white/5'
-                                    }`}
-                                >
-                                    <span>👥</span>
-                                    <span>Patients</span>
-                                </Link>
+                            <Link
+                                href={route('doctors.index')}
+                                className={`hidden 2xl:flex px-2 py-1.5 xl:px-2.5 rounded-xl text-xs font-bold transition-all items-center gap-1.5 ${
+                                    route().current('doctors.*')
+                                        ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
+                                        : 'text-gray-300 hover:text-white hover:bg-white/5'
+                                }`}
+                            >
+                                <span>🩺</span>
+                                <span>Doctors</span>
+                            </Link>
 
-                                <Link
-                                    href={route('doctors.index')}
-                                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                        route().current('doctors.*')
-                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
-                                            : 'text-gray-300 hover:text-white hover:bg-white/5'
-                                    }`}
-                                >
-                                    <span>🩺</span>
-                                    <span>Doctors</span>
-                                </Link>
-
-                                {/* Clinical Group Dropdown (Medical Records & Treatment Sessions) */}
-                                <div className="relative">
-                                    <Dropdown>
-                                        <Dropdown.Trigger>
-                                            <button
-                                                type="button"
-                                                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                                    isClinicalActive
-                                                        ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
-                                                        : 'text-gray-300 hover:text-white hover:bg-white/5'
-                                                }`}
-                                            >
-                                                <span>📋</span>
-                                                <span>Clinical Care</span>
-                                                <svg className="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                                </svg>
-                                            </button>
-                                        </Dropdown.Trigger>
-                                        <Dropdown.Content>
-                                            <Dropdown.Link href={route('medical-records.index')} className="flex items-center gap-2">
-                                                <span>🩺 Medical Records (SOAP)</span>
-                                            </Dropdown.Link>
-                                            <Dropdown.Link href={route('medical-images.index')} className="flex items-center gap-2">
-                                                <span>🩻 X-Ray & MRI Viewer</span>
-                                            </Dropdown.Link>
-                                            <Dropdown.Link href={route('consent-forms.index')} className="flex items-center gap-2">
-                                                <span>✍️ Consent Forms (E-Sign)</span>
-                                            </Dropdown.Link>
-                                            <Dropdown.Link href={route('treatment-plans.index')} className="flex items-center gap-2">
-                                                <span>📋 Treatment Plans</span>
-                                            </Dropdown.Link>
-                                            <Dropdown.Link href={route('treatment-sessions.index')} className="flex items-center gap-2">
-                                                <span>🦴 Treatment Sessions</span>
-                                            </Dropdown.Link>
-                                        </Dropdown.Content>
-                                    </Dropdown>
-                                </div>
-
-                                <Link
-                                    href={route('billing.index')}
-                                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                        route().current('billing.*') || route().current('invoices.*')
-                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
-                                            : 'text-gray-300 hover:text-white hover:bg-white/5'
-                                    }`}
-                                >
-                                    <span>💳</span>
-                                    <span>Billing</span>
-                                </Link>
-
-                                <Link
-                                    href={route('insurance.index')}
-                                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                        route().current('insurance.*')
-                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
-                                            : 'text-gray-300 hover:text-white hover:bg-white/5'
-                                    }`}
-                                >
-                                    <span>🛡️</span>
-                                    <span>Insurance</span>
-                                </Link>
-
-                                <Link
-                                    href={route('reports.index')}
-                                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                        route().current('reports.*')
-                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
-                                            : 'text-gray-300 hover:text-white hover:bg-white/5'
-                                    }`}
-                                >
-                                    <span>📈</span>
-                                    <span>Reports</span>
-                                </Link>
-
-                                <Link
-                                    href={route('ai-assistant.index')}
-                                    className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                        route().current('ai-assistant.*')
-                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
-                                            : 'text-gray-300 hover:text-white hover:bg-white/5'
-                                    }`}
-                                >
-                                    <span>✨</span>
-                                    <span>AI Assistant</span>
-                                </Link>
-
-
-                                {user.role === 'admin' && (
-                                    <Link
-                                        href={route('admin.users.index')}
-                                        className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                                            route().current('admin.users.*')
-                                                ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
-                                                : 'text-gray-300 hover:text-white hover:bg-white/5'
-                                        }`}
-                                    >
-                                        <span>⚙️</span>
-                                        <span>Users</span>
-                                    </Link>
-                                )}
+                            {/* Clinical Group Dropdown */}
+                            <div className="relative">
+                                <Dropdown>
+                                    <Dropdown.Trigger>
+                                        <button
+                                            type="button"
+                                            className={`px-2 py-1.5 xl:px-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                                                isClinicalActive
+                                                    ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
+                                                    : 'text-gray-300 hover:text-white hover:bg-white/5'
+                                            }`}
+                                        >
+                                            <span>📋</span>
+                                            <span>Clinical Care</span>
+                                            <svg className="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </Dropdown.Trigger>
+                                    <Dropdown.Content>
+                                        <Dropdown.Link href={route('doctors.index')} className="flex items-center gap-2 2xl:hidden">
+                                            <span>🩺 Chiropractors & Doctors</span>
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('medical-records.index')} className="flex items-center gap-2">
+                                            <span>🩺 Medical Records (SOAP)</span>
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('medical-images.index')} className="flex items-center gap-2">
+                                            <span>🩻 X-Ray & MRI Viewer</span>
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('consent-forms.index')} className="flex items-center gap-2">
+                                            <span>✍️ Consent Forms (E-Sign)</span>
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('treatment-plans.index')} className="flex items-center gap-2">
+                                            <span>📋 Treatment Plans</span>
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('treatment-sessions.index')} className="flex items-center gap-2">
+                                            <span>🦴 Treatment Sessions</span>
+                                        </Dropdown.Link>
+                                    </Dropdown.Content>
+                                </Dropdown>
                             </div>
+
+                            {/* Practice Operations & Billing Dropdown */}
+                            <div className="relative">
+                                <Dropdown>
+                                    <Dropdown.Trigger>
+                                        <button
+                                            type="button"
+                                            className={`px-2 py-1.5 xl:px-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                                                isPracticeOpsActive
+                                                    ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
+                                                    : 'text-gray-300 hover:text-white hover:bg-white/5'
+                                            }`}
+                                        >
+                                            <span>💳</span>
+                                            <span>Practice Ops</span>
+                                            <svg className="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </Dropdown.Trigger>
+                                    <Dropdown.Content>
+                                        <Dropdown.Link href={route('billing.index')} className="flex items-center gap-2">
+                                            <span>💳 Billing & Invoices</span>
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('insurance.index')} className="flex items-center gap-2">
+                                            <span>🛡️ Insurance & Claims</span>
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('inventory.index')} className="flex items-center gap-2">
+                                            <span>📦 Inventory & Supplies</span>
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('reports.index')} className="flex items-center gap-2">
+                                            <span>📈 Reports & Analytics</span>
+                                        </Dropdown.Link>
+                                    </Dropdown.Content>
+                                </Dropdown>
+                            </div>
+
+                            <Link
+                                href={route('ai-assistant.index')}
+                                className={`px-2 py-1.5 xl:px-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                                    route().current('ai-assistant.*')
+                                        ? 'bg-purple-600/30 text-purple-200 border border-purple-500/50 shadow-sm'
+                                        : 'text-purple-300 hover:text-white hover:bg-purple-600/10 border border-purple-500/20'
+                                }`}
+                            >
+                                <span>✨</span>
+                                <span className="hidden xl:inline">AI Assistant</span>
+                                <span className="xl:hidden">AI</span>
+                            </Link>
+
+                            {user.role === 'admin' && (
+                                <Link
+                                    href={route('admin.users.index')}
+                                    className={`hidden 2xl:flex px-2 py-1.5 xl:px-2.5 rounded-xl text-xs font-bold transition-all items-center gap-1.5 ${
+                                        route().current('admin.users.*')
+                                            ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
+                                            : 'text-gray-300 hover:text-white hover:bg-white/5'
+                                    }`}
+                                >
+                                    <span>⚙️</span>
+                                    <span>Users</span>
+                                </Link>
+                            )}
                         </div>
 
                         {/* Right Quick Actions, Notifications & User Profile Menu */}
-                        <div className="hidden lg:flex lg:items-center lg:gap-3">
+                        <div className="hidden lg:flex items-center gap-1.5 xl:gap-2.5 shrink-0">
                             {/* Notification Bell Dropdown Widget */}
                             <Dropdown>
                                 <Dropdown.Trigger>
@@ -206,29 +220,15 @@ export default function Authenticated({
                                             View All →
                                         </Link>
                                     </div>
-                                    <div className="divide-y divide-white/5 max-h-64 overflow-y-auto">
-                                        {((usePage().props as any).notifications?.latest || []).length === 0 ? (
-                                            <div className="p-4 text-center text-xs text-gray-500">
-                                                No unread reminders.
-                                            </div>
+                                    <div className="max-h-64 overflow-y-auto divide-y divide-white/5">
+                                        {((usePage().props as any).notifications?.unreadItems || []).length === 0 ? (
+                                            <p className="p-4 text-xs text-gray-500 text-center">No unread notifications.</p>
                                         ) : (
-                                            ((usePage().props as any).notifications?.latest || []).map((notif: any) => (
-                                                <Link
-                                                    key={notif.id}
-                                                    href={notif.action_url || route('notifications.index')}
-                                                    className="p-3 block hover:bg-white/[0.04] transition-colors"
-                                                >
-                                                    <span className="font-bold text-xs text-white block">
-                                                        {notif.type === 'appointment_reminder' && '📅 '}
-                                                        {notif.type === 'payment_reminder' && '💳 '}
-                                                        {notif.type === 'birthday_reminder' && '🎂 '}
-                                                        {notif.type === 'followup_reminder' && '🩺 '}
-                                                        {notif.title}
-                                                    </span>
-                                                    <span className="text-[11px] text-gray-400 block line-clamp-2 mt-0.5">
-                                                        {notif.message}
-                                                    </span>
-                                                </Link>
+                                            ((usePage().props as any).notifications?.unreadItems || []).map((n: any) => (
+                                                <div key={n.id} className="p-3 hover:bg-white/5 transition-colors text-xs">
+                                                    <p className="font-bold text-white">{n.title}</p>
+                                                    <p className="text-[11px] text-gray-400 mt-0.5 line-clamp-2">{n.message}</p>
+                                                </div>
                                             ))
                                         )}
                                     </div>
@@ -240,7 +240,7 @@ export default function Authenticated({
                                 <Dropdown.Trigger>
                                     <button
                                         type="button"
-                                        className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs hover:from-purple-500 hover:to-indigo-500 transition-all shadow-md shadow-purple-600/20 flex items-center gap-1.5"
+                                        className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs hover:from-purple-500 hover:to-indigo-500 transition-all shadow-md shadow-purple-600/20 flex items-center gap-1.5"
                                     >
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
@@ -264,18 +264,17 @@ export default function Authenticated({
                                 </Dropdown.Content>
                             </Dropdown>
 
-
                             {/* User Profile Pill Menu */}
                             <Dropdown>
                                 <Dropdown.Trigger>
                                     <button
                                         type="button"
-                                        className="inline-flex items-center gap-2.5 rounded-xl bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-gray-200 transition-all hover:bg-white/10 border border-white/10 hover:border-purple-500/30"
+                                        className="inline-flex items-center gap-2 rounded-xl bg-white/[0.04] px-2.5 py-1.5 text-xs font-semibold text-gray-200 transition-all hover:bg-white/10 border border-white/10 hover:border-purple-500/30"
                                     >
-                                        <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-xs text-white shadow-inner">
+                                        <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center font-bold text-xs text-white shadow-inner shrink-0">
                                             {user.name.charAt(0).toUpperCase()}
                                         </div>
-                                        <div className="text-left hidden xl:block">
+                                        <div className="text-left hidden 2xl:block">
                                             <span className="block font-bold text-white text-xs leading-none">{user.name}</span>
                                             <span className="text-[10px] uppercase font-mono font-bold text-purple-400 tracking-wider">
                                                 {user.role}
@@ -309,9 +308,8 @@ export default function Authenticated({
                             </Dropdown>
                         </div>
 
-
                         {/* Hamburger Button for Mobile */}
-                        <div className="flex items-center lg:hidden">
+                        <div className="flex items-center lg:hidden shrink-0">
                             <button
                                 onClick={() => setShowingNavigationDropdown((prev) => !prev)}
                                 className="inline-flex items-center justify-center rounded-xl p-2 text-gray-400 hover:bg-white/10 hover:text-white transition-all border border-white/10"
@@ -349,13 +347,34 @@ export default function Authenticated({
                             🩺 Doctors
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('medical-records.index')} active={route().current('medical-records.*')}>
-                            📝 Medical Records
+                            🩺 Medical Records (SOAP)
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('medical-images.index')} active={route().current('medical-images.*')}>
+                            🩻 X-Ray & MRI Viewer
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('consent-forms.index')} active={route().current('consent-forms.*')}>
+                            ✍️ Consent Forms
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('treatment-plans.index')} active={route().current('treatment-plans.*')}>
+                            📋 Treatment Plans
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('treatment-sessions.index')} active={route().current('treatment-sessions.*')}>
                             🦴 Treatment Sessions
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('billing.index')} active={route().current('billing.*')}>
                             💳 Billing & Invoices
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('insurance.index')} active={route().current('insurance.*')}>
+                            🛡️ Insurance & Claims
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('inventory.index')} active={route().current('inventory.*')}>
+                            📦 Inventory & Supplies
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('reports.index')} active={route().current('reports.*')}>
+                            📈 Reports & Analytics
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('ai-assistant.index')} active={route().current('ai-assistant.*')}>
+                            ✨ AI Assistant
                         </ResponsiveNavLink>
                         {user.role === 'admin' && (
                             <ResponsiveNavLink href={route('admin.users.index')} active={route().current('admin.users.*')}>
@@ -390,7 +409,9 @@ export default function Authenticated({
                 </header>
             )}
 
-            <main className="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{children}</main>
+            <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                {children}
+            </main>
         </div>
     );
 }

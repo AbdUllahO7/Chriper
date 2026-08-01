@@ -8,6 +8,7 @@ use App\Http\Controllers\ConsentFormController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\InsuranceController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\MedicalImageController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\NotificationController;
@@ -93,6 +94,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/insurance/claims', [InsuranceController::class, 'storeClaim'])->name('insurance.claims.store');
     Route::patch('/insurance/claims/{claim}/status', [InsuranceController::class, 'updateClaimStatus'])->name('insurance.claims.update-status');
     Route::delete('/insurance/claims/{claim}', [InsuranceController::class, 'destroyClaim'])->name('insurance.claims.destroy');
+
+    // Clinic Inventory & Supply Stock Module Routes
+    Route::get('/inventory', [InventoryController::class, 'index'])->name('inventory.index');
+    Route::post('/inventory', [InventoryController::class, 'store'])->name('inventory.store');
+    Route::put('/inventory/{inventory_item}', [InventoryController::class, 'update'])->name('inventory.update');
+    Route::post('/inventory/{inventory_item}/restock', [InventoryController::class, 'restock'])->name('inventory.restock');
+    Route::post('/inventory/{inventory_item}/consume', [InventoryController::class, 'consume'])->name('inventory.consume');
+    Route::delete('/inventory/{inventory_item}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
 
     // Analytics & Reports Module Routes
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
