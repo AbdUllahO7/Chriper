@@ -73,6 +73,9 @@ class PatientController extends Controller
             'medicalImages' => function ($q) {
                 $q->latest('scan_date');
             },
+            'insurancePolicies' => function ($q) {
+                $q->latest();
+            },
             'invoices' => function ($q) {
                 $q->with('payments')->latest('issue_date');
             },

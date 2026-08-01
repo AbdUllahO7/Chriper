@@ -7,6 +7,7 @@ use App\Http\Controllers\ClinicSettingController;
 use App\Http\Controllers\ConsentFormController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\MedicalImageController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\NotificationController;
@@ -83,6 +84,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/invoices/{invoice}', [BillingController::class, 'showInvoice'])->name('invoices.show');
     Route::delete('/invoices/{invoice}', [BillingController::class, 'destroyInvoice'])->name('invoices.destroy');
     Route::post('/invoices/{invoice}/record-payment', [BillingController::class, 'recordPayment'])->name('invoices.record-payment');
+
+    // Insurance & Claims Management Module Routes
+    Route::get('/insurance', [InsuranceController::class, 'index'])->name('insurance.index');
+    Route::post('/insurance/policies', [InsuranceController::class, 'storePolicy'])->name('insurance.policies.store');
+    Route::put('/insurance/policies/{policy}', [InsuranceController::class, 'updatePolicy'])->name('insurance.policies.update');
+    Route::delete('/insurance/policies/{policy}', [InsuranceController::class, 'destroyPolicy'])->name('insurance.policies.destroy');
+    Route::post('/insurance/claims', [InsuranceController::class, 'storeClaim'])->name('insurance.claims.store');
+    Route::patch('/insurance/claims/{claim}/status', [InsuranceController::class, 'updateClaimStatus'])->name('insurance.claims.update-status');
+    Route::delete('/insurance/claims/{claim}', [InsuranceController::class, 'destroyClaim'])->name('insurance.claims.destroy');
 
     // Analytics & Reports Module Routes
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');

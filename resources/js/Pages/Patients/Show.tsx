@@ -70,6 +70,18 @@ interface MedicalImageRecord {
     file_url: string;
 }
 
+interface InsurancePolicyRecord {
+    id: number;
+    insurance_company: string;
+    policy_number: string;
+    coverage_percentage: number;
+    copay_amount: number;
+    max_visits_per_year: number;
+    used_visits: number;
+    remaining_visits: number;
+    status: 'active' | 'expired' | 'pending_verification';
+}
+
 interface ShowProps {
     patient: Patient & {
         appointments: AppointmentRecord[];
@@ -78,6 +90,7 @@ interface ShowProps {
         treatmentPlans?: TreatmentPlanRecord[];
         consentForms?: ConsentFormRecord[];
         medicalImages?: MedicalImageRecord[];
+        insurancePolicies?: InsurancePolicyRecord[];
         invoices?: InvoiceRecord[];
     };
 }
@@ -159,6 +172,53 @@ export default function Show({ patient }: ShowProps) {
                                 <span className="text-purple-300 font-semibold">{patient.insurance || 'Self Pay'}</span>
                             </div>
                         </div>
+                    </div>
+
+                    {/* Active Insurance Policy & Remaining Visits Card */}
+                    <div className="glass-card rounded-3xl p-6 border border-white/10 shadow-xl space-y-3">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-xs font-bold uppercase tracking-wider text-purple-300">Active Insurance Coverage</h3>
+                            <Link href={route('insurance.index')} className="text-[10px] text-gray-400 hover:text-white font-mono">
+                                Manage →
+                            </Link>
+                        </div>
+
+                        {!patient.insurancePolicies || patient.insurancePolicies.length === 0 ? (
+                            <p className="text-xs text-gray-500 py-2">No active insurance policy linked.</p>
+                        ) : (
+                            patient.insurancePolicies.map((pol) => {
+                                const usedPct = Math.min(100, Math.round((pol.used_visits / pol.max_visits_per_year) * 100));
+
+                                return (
+                                    <div key={pol.id} className="space-y-2">
+                                        <div className="flex justify-between items-center text-xs">
+                                            <span className="font-extrabold text-white">{pol.insurance_company}</span>
+                                            <span className="font-mono text-purple-300 font-bold">{pol.coverage_percentage}% Covered</span>
+                                        </div>
+
+                                        <span className="text-[11px] text-gray-400 font-mono block">
+                                            Policy #: {pol.policy_number} • Copay: ${pol.copay_amount}
+                                        </span>
+
+                                        <div className="pt-2">
+                                            <div className="flex justify-between text-[11px] font-mono mb-1">
+                                                <span className="text-gray-400">Annual Visits:</span>
+                                                <span className="text-emerald-300 font-bold">{pol.used_visits} / {pol.max_visits_per_year} Used</span>
+                                            </div>
+                                            <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-white/10">
+                                                <div
+                                                    className="h-full bg-gradient-to-r from-purple-500 to-indigo-500"
+                                                    style={{ width: `${usedPct}%` }}
+                                                ></div>
+                                            </div>
+                                            <span className="text-[10px] text-emerald-300 font-mono block mt-1 text-right font-extrabold">
+                                                {pol.remaining_visits} Covered Visits Remaining
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        )}
                     </div>
 
                     {/* Emergency Contact Card */}
