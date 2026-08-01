@@ -66,6 +66,16 @@ class Patient extends Model
         return $this->hasMany(Invoice::class);
     }
 
+    public function insurancePolicies(): HasMany
+    {
+        return $this->hasMany(InsurancePolicy::class);
+    }
+
+    public function insuranceClaims(): HasMany
+    {
+        return $this->hasMany(InsuranceClaim::class);
+    }
+
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
