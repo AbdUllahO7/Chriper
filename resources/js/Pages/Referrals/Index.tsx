@@ -71,12 +71,12 @@ export default function Index({
 
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        router.get(route('referrals.index'), { search, referral_source: sourceFilter }, { preserveState: true });
+        router.get(route('referrals.index'), { search, referral_source: sourceFilter }, { preserveState: true, preserveScroll: true });
     };
 
     const handleSourceFilterChange = (src: string) => {
         setSourceFilter(src);
-        router.get(route('referrals.index'), { search, referral_source: src }, { preserveState: true });
+        router.get(route('referrals.index'), { search, referral_source: src }, { preserveState: true, preserveScroll: true });
     };
 
     const handleOpenEditReferral = (patient: ReferredPatient) => {
@@ -93,6 +93,7 @@ export default function Index({
         if (!editingPatient) return;
 
         referralForm.post(route('patients.update-referral', editingPatient.id), {
+            preserveScroll: true,
             onSuccess: () => setEditingPatient(null),
         });
     };
@@ -327,6 +328,7 @@ export default function Index({
                         <div className="flex flex-wrap items-center gap-2">
                             {['', 'doctor', 'friend', 'social_media', 'google_search', 'walk_in'].map((src) => (
                                 <button
+                                    type="button"
                                     key={src}
                                     onClick={() => handleSourceFilterChange(src)}
                                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all capitalize ${
