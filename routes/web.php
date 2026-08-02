@@ -7,6 +7,7 @@ use App\Http\Controllers\ClinicSettingController;
 use App\Http\Controllers\ConsentFormController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\FinancialDashboardController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\MedicalImageController;
@@ -81,6 +82,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Billing & Invoices Module Routes
     Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
+    Route::get('/financial-dashboard', [FinancialDashboardController::class, 'index'])->name('financial-dashboard.index');
     Route::post('/invoices', [BillingController::class, 'storeInvoice'])->name('invoices.store');
     Route::get('/invoices/{invoice}', [BillingController::class, 'showInvoice'])->name('invoices.show');
     Route::delete('/invoices/{invoice}', [BillingController::class, 'destroyInvoice'])->name('invoices.destroy');

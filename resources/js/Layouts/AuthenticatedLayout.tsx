@@ -21,6 +21,7 @@ export default function Authenticated({
 
     const isPracticeOpsActive =
         route().current('billing.*') ||
+        route().current('financial-dashboard.*') ||
         route().current('invoices.*') ||
         route().current('insurance.*') ||
         route().current('inventory.*') ||
@@ -150,6 +151,9 @@ export default function Authenticated({
                                         </button>
                                     </Dropdown.Trigger>
                                     <Dropdown.Content>
+                                        <Dropdown.Link href={route('financial-dashboard.index')} className="flex items-center gap-2">
+                                            <span>📊 Financial Dashboard</span>
+                                        </Dropdown.Link>
                                         <Dropdown.Link href={route('billing.index')} className="flex items-center gap-2">
                                             <span>💳 Billing & Invoices</span>
                                         </Dropdown.Link>
@@ -360,6 +364,9 @@ export default function Authenticated({
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('treatment-sessions.index')} active={route().current('treatment-sessions.*')}>
                             🦴 Treatment Sessions
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('financial-dashboard.index')} active={route().current('financial-dashboard.*')}>
+                            📊 Financial Dashboard
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('billing.index')} active={route().current('billing.*')}>
                             💳 Billing & Invoices
