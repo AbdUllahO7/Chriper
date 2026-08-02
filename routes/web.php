@@ -15,6 +15,7 @@ use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TreatmentPlanController;
 use App\Http\Controllers\TreatmentSessionController;
@@ -104,6 +105,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/inventory/{inventory_item}/restock', [InventoryController::class, 'restock'])->name('inventory.restock');
     Route::post('/inventory/{inventory_item}/consume', [InventoryController::class, 'consume'])->name('inventory.consume');
     Route::delete('/inventory/{inventory_item}', [InventoryController::class, 'destroy'])->name('inventory.destroy');
+
+    // Referral Tracking & Analytics Routes
+    Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
+    Route::post('/patients/{patient}/referral', [ReferralController::class, 'updatePatientReferral'])->name('patients.update-referral');
 
     // Analytics & Reports Module Routes
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');

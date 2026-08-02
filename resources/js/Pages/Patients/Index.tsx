@@ -58,6 +58,8 @@ export default function Index({ patients, filters }: IndexProps) {
         emergency_contact: '',
         insurance: '',
         notes: '',
+        referral_source: 'walk_in',
+        referred_by_name: '',
         status: 'active',
         profile_photo: null as File | null,
     });

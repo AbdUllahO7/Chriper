@@ -25,6 +25,7 @@ export default function Authenticated({
         route().current('invoices.*') ||
         route().current('insurance.*') ||
         route().current('inventory.*') ||
+        route().current('referrals.*') ||
         route().current('reports.*');
 
     return (
@@ -162,6 +163,9 @@ export default function Authenticated({
                                         </Dropdown.Link>
                                         <Dropdown.Link href={route('inventory.index')} className="flex items-center gap-2">
                                             <span>📦 Inventory & Supplies</span>
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('referrals.index')} className="flex items-center gap-2">
+                                            <span>📢 Referral Tracking</span>
                                         </Dropdown.Link>
                                         <Dropdown.Link href={route('reports.index')} className="flex items-center gap-2">
                                             <span>📈 Reports & Analytics</span>
@@ -376,6 +380,9 @@ export default function Authenticated({
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('inventory.index')} active={route().current('inventory.*')}>
                             📦 Inventory & Supplies
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('referrals.index')} active={route().current('referrals.*')}>
+                            📢 Referral Tracking
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('reports.index')} active={route().current('reports.*')}>
                             📈 Reports & Analytics
