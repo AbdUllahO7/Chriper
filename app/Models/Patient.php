@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
@@ -22,6 +23,10 @@ class Patient extends Model
         'emergency_contact',
         'insurance',
         'notes',
+        'referral_source',
+        'referred_by_name',
+        'referred_by_patient_id',
+        'referral_notes',
         'status',
         'profile_photo_path',
     ];
@@ -74,6 +79,16 @@ class Patient extends Model
     public function insuranceClaims(): HasMany
     {
         return $this->hasMany(InsuranceClaim::class);
+    }
+
+    public function referredByPatient(): BelongsTo
+    {
+        return $this->belongsTo(Patient::class, 'referred_by_patient_id');
+    }
+
+    public function referredPatients(): HasMany
+    {
+        return $this->hasMany(Patient::class, 'referred_by_patient_id');
     }
 
     public function getFullNameAttribute(): string

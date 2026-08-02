@@ -108,6 +108,10 @@ class PatientController extends Controller
             'emergency_contact' => ['nullable', 'string', 'max:255'],
             'insurance' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string', 'max:2000'],
+            'referral_source' => ['nullable', Rule::in(['doctor', 'friend', 'social_media', 'google_search', 'walk_in', 'advertisement', 'other'])],
+            'referred_by_name' => ['nullable', 'string', 'max:255'],
+            'referred_by_patient_id' => ['nullable', 'exists:patients,id'],
+            'referral_notes' => ['nullable', 'string', 'max:1000'],
             'status' => ['required', Rule::in(['active', 'inactive'])],
             'profile_photo' => ['nullable', 'image', 'max:2048'], // 2MB Max
         ]);

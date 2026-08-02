@@ -171,6 +171,16 @@ export default function Show({ patient }: ShowProps) {
                                 <span className="text-xs text-gray-400 block uppercase font-semibold">Insurance Carrier</span>
                                 <span className="text-purple-300 font-semibold">{patient.insurance || 'Self Pay'}</span>
                             </div>
+                            <div>
+                                <span className="text-xs text-gray-400 block uppercase font-semibold">Referral Source</span>
+                                <span className="text-emerald-300 font-semibold flex items-center gap-1.5 mt-0.5">
+                                    <span>📢</span>
+                                    <span>
+                                        {(patient as any).referral_source ? (patient as any).referral_source.replace('_', ' ') : 'Walk-in'}
+                                        {(patient as any).referred_by_name ? ` (${(patient as any).referred_by_name})` : ''}
+                                    </span>
+                                </span>
+                            </div>
                         </div>
                     </div>
 
