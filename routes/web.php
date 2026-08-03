@@ -13,6 +13,7 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\FinancialDashboardController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\KpiDashboardController;
 use App\Http\Controllers\MedicalImageController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\NotificationController;
@@ -142,6 +143,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Analytics & Reports Module Routes
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/kpi-dashboard', [KpiDashboardController::class, 'index'])->name('kpi-dashboard.index');
     Route::get('/reports/export/csv', [ReportController::class, 'exportCsv'])->name('reports.export.csv');
     Route::get('/reports/export/pdf', [ReportController::class, 'exportPdf'])->name('reports.export.pdf');
 
