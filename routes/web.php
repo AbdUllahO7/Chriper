@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AiClinicalAssistantController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\ClinicSettingController;
 use App\Http\Controllers\ConsentFormController;
@@ -123,6 +124,13 @@ Route::middleware(['auth'])->group(function () {
     // Referral Tracking & Analytics Routes
     Route::get('/referrals', [ReferralController::class, 'index'])->name('referrals.index');
     Route::post('/patients/{patient}/referral', [ReferralController::class, 'updatePatientReferral'])->name('patients.update-referral');
+
+    // Staff Attendance, Working Hours & Leave Management Routes
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])->name('attendance.clock-in');
+    Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut'])->name('attendance.clock-out');
+    Route::post('/leave-requests', [AttendanceController::class, 'storeLeaveRequest'])->name('leave-requests.store');
+    Route::patch('/leave-requests/{leave_request}/status', [AttendanceController::class, 'updateLeaveStatus'])->name('leave-requests.update-status');
 
     // Analytics & Reports Module Routes
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
