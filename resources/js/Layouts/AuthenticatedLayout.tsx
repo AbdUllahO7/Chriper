@@ -19,7 +19,8 @@ export default function Authenticated({
         route().current('custom-forms.*') ||
         route().current('treatment-plans.*') ||
         route().current('treatment-sessions.*') ||
-        route().current('doctors.*');
+        route().current('documents.*') ||
+        route().current('reports.*');
 
     const isPracticeOpsActive =
         route().current('billing.*') ||
@@ -135,6 +136,9 @@ export default function Authenticated({
                                         </Dropdown.Link>
                                         <Dropdown.Link href={route('treatment-sessions.index')} className="flex items-center gap-2">
                                             <span>🦴 Treatment Sessions</span>
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('documents.index')} className="flex items-center gap-2">
+                                            <span>📄 Document Generator</span>
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
@@ -436,6 +440,9 @@ export default function Authenticated({
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('treatment-sessions.index')} active={route().current('treatment-sessions.*')}>
                             🦴 Treatment Sessions
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('documents.index')} active={route().current('documents.*')}>
+                            📄 Document Generator
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('financial-dashboard.index')} active={route().current('financial-dashboard.*')}>
                             📊 Financial Dashboard
