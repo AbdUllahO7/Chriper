@@ -15,6 +15,7 @@ export default function Authenticated({
         route().current('medical-records.*') ||
         route().current('medical-images.*') ||
         route().current('consent-forms.*') ||
+        route().current('custom-forms.*') ||
         route().current('treatment-plans.*') ||
         route().current('treatment-sessions.*') ||
         route().current('doctors.*');
@@ -121,6 +122,9 @@ export default function Authenticated({
                                         </Dropdown.Link>
                                         <Dropdown.Link href={route('consent-forms.index')} className="flex items-center gap-2">
                                             <span>✍️ Consent Forms (E-Sign)</span>
+                                        </Dropdown.Link>
+                                        <Dropdown.Link href={route('custom-forms.index')} className="flex items-center gap-2">
+                                            <span>📝 Custom Form Builder</span>
                                         </Dropdown.Link>
                                         <Dropdown.Link href={route('treatment-plans.index')} className="flex items-center gap-2">
                                             <span>📋 Treatment Plans</span>
@@ -362,6 +366,9 @@ export default function Authenticated({
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('consent-forms.index')} active={route().current('consent-forms.*')}>
                             ✍️ Consent Forms
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('custom-forms.index')} active={route().current('custom-forms.*')}>
+                            📝 Custom Form Builder
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('treatment-plans.index')} active={route().current('treatment-plans.*')}>
                             📋 Treatment Plans

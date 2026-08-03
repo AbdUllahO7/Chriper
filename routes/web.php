@@ -5,6 +5,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\ClinicSettingController;
 use App\Http\Controllers\ConsentFormController;
+use App\Http\Controllers\CustomFormController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\FinancialDashboardController;
@@ -80,6 +81,19 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('consent-forms', ConsentFormController::class);
     Route::post('consent-forms/{consent_form}/sign', [ConsentFormController::class, 'sign'])
         ->name('consent-forms.sign');
+
+    // No-Code Custom Intake Forms Builder Routes
+    Route::get('/custom-forms', [CustomFormController::class, 'index'])->name('custom-forms.index');
+    Route::post('/custom-forms', [CustomFormController::class, 'store'])->name('custom-forms.store');
+    Route::get('/custom-forms/{form}/builder', [CustomFormController::class, 'builder'])->name('custom-forms.builder');
+    Route::put('/custom-forms/{form}', [CustomFormController::class, 'update'])->name('custom-forms.update');
+    Route::post('/custom-forms/{form}/duplicate', [CustomFormController::class, 'duplicate'])->name('custom-forms.duplicate');
+    Route::delete('/custom-forms/{form}', [CustomFormController::class, 'destroy'])->name('custom-forms.destroy');
+    Route::get('/custom-forms/submissions', [CustomFormController::class, 'submissions'])->name('custom-forms.submissions');
+
+    // Public Patient-Facing Intake Form View & Submit
+    Route::get('/intake-forms/{form}', [CustomFormController::class, 'publicShow'])->name('intake-forms.show');
+    Route::post('/intake-forms/{form}/submit', [CustomFormController::class, 'publicSubmit'])->name('intake-forms.submit');
 
     // Billing & Invoices Module Routes
     Route::get('/billing', [BillingController::class, 'index'])->name('billing.index');
