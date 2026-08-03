@@ -15,6 +15,7 @@ class Appointment extends Model
         'patient_id',
         'doctor_id',
         'chiropractor_id',
+        'clinic_branch_id',
         'appointment_date',
         'duration',
         'status',
@@ -40,6 +41,11 @@ class Appointment extends Model
     public function chiropractor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'chiropractor_id');
+    }
+
+    public function clinicBranch(): BelongsTo
+    {
+        return $this->belongsTo(ClinicBranch::class);
     }
 
     public function payments(): HasMany

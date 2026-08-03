@@ -50,6 +50,20 @@ class HandleInertiaRequests extends Middleware
             }
         }
 
+        $branchesData = [];
+        $activeBranchId = session('active_branch_id', 'all');
+
+        if ($user) {
+            try {
+                if (Schema::hasTable('clinic_branches')) {
+                    $branchesData = \App\Models\ClinicBranch::where('is_active', true)
+                        ->get(['id', 'name', 'code', 'is_main_branch']);
+                }
+            } catch (\Throwable $e) {
+                $branchesData = [];
+            }
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -63,6 +77,8 @@ class HandleInertiaRequests extends Middleware
                 ] : null,
             ],
             'notifications' => $user ? $notificationData : null,
+            'clinicBranches' => $branchesData,
+            'activeBranchId' => $activeBranchId,
         ];
     }
 }
