@@ -10,6 +10,7 @@ use App\Http\Controllers\ConsentFormController;
 use App\Http\Controllers\CustomFormController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\DocumentGeneratorController;
 use App\Http\Controllers\FinancialDashboardController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\InventoryController;
@@ -140,6 +141,12 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/branches/{branch}', [ClinicBranchController::class, 'update'])->name('branches.update');
     Route::delete('/branches/{branch}', [ClinicBranchController::class, 'destroy'])->name('branches.destroy');
     Route::post('/switch-branch', [ClinicBranchController::class, 'switchBranch'])->name('switch-branch');
+
+    // Document Generator & Export Engine Routes
+    Route::get('/documents', [DocumentGeneratorController::class, 'index'])->name('documents.index');
+    Route::post('/documents', [DocumentGeneratorController::class, 'store'])->name('documents.store');
+    Route::get('/documents/{document}', [DocumentGeneratorController::class, 'show'])->name('documents.show');
+    Route::delete('/documents/{document}', [DocumentGeneratorController::class, 'destroy'])->name('documents.destroy');
 
     // Analytics & Reports Module Routes
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
