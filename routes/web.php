@@ -4,6 +4,7 @@ use App\Http\Controllers\AiClinicalAssistantController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\ClinicBranchController;
 use App\Http\Controllers\ClinicSettingController;
 use App\Http\Controllers\ConsentFormController;
 use App\Http\Controllers\CustomFormController;
@@ -131,6 +132,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut'])->name('attendance.clock-out');
     Route::post('/leave-requests', [AttendanceController::class, 'storeLeaveRequest'])->name('leave-requests.store');
     Route::patch('/leave-requests/{leave_request}/status', [AttendanceController::class, 'updateLeaveStatus'])->name('leave-requests.update-status');
+
+    // Multi-Clinic Branch Support Routes
+    Route::get('/branches', [ClinicBranchController::class, 'index'])->name('branches.index');
+    Route::post('/branches', [ClinicBranchController::class, 'store'])->name('branches.store');
+    Route::put('/branches/{branch}', [ClinicBranchController::class, 'update'])->name('branches.update');
+    Route::delete('/branches/{branch}', [ClinicBranchController::class, 'destroy'])->name('branches.destroy');
+    Route::post('/switch-branch', [ClinicBranchController::class, 'switchBranch'])->name('switch-branch');
 
     // Analytics & Reports Module Routes
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');

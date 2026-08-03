@@ -1,14 +1,15 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode, useState } from 'react';
 
 export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
-    const user = usePage().props.auth.user;
+    const { auth, clinicBranches, activeBranchId } = usePage().props as any;
+    const user = auth.user;
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
     const isClinicalActive =
@@ -28,6 +29,7 @@ export default function Authenticated({
         route().current('inventory.*') ||
         route().current('referrals.*') ||
         route().current('attendance.*') ||
+        route().current('branches.*') ||
         route().current('reports.*');
 
     return (
@@ -175,6 +177,9 @@ export default function Authenticated({
                                         <Dropdown.Link href={route('attendance.index')} className="flex items-center gap-2">
                                             <span>⏱️ Staff Attendance</span>
                                         </Dropdown.Link>
+                                        <Dropdown.Link href={route('branches.index')} className="flex items-center gap-2">
+                                            <span>📍 Clinic Branches</span>
+                                        </Dropdown.Link>
                                         <Dropdown.Link href={route('reports.index')} className="flex items-center gap-2">
                                             <span>📈 Reports & Analytics</span>
                                         </Dropdown.Link>
@@ -212,6 +217,54 @@ export default function Authenticated({
 
                         {/* Right Quick Actions, Notifications & User Profile Menu */}
                         <div className="hidden lg:flex items-center gap-1.5 xl:gap-2.5 shrink-0">
+                            {/* Branch Switcher Dropdown Widget */}
+                            <Dropdown>
+                                <Dropdown.Trigger>
+                                    <button
+                                        type="button"
+                                        className="px-2.5 py-1.5 rounded-xl bg-purple-950/40 text-purple-300 hover:text-white hover:bg-purple-900/50 border border-purple-500/30 transition-all font-mono font-bold text-xs flex items-center gap-1.5 shadow-sm"
+                                    >
+                                        <span>📍</span>
+                                        <span className="hidden xl:inline">
+                                            {activeBranchId === 'all'
+                                                ? 'All Branches (HQ)'
+                                                : (clinicBranches || []).find((b: any) => String(b.id) === String(activeBranchId))?.name || 'Branch'}
+                                        </span>
+                                        <svg className="w-3 h-3 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </Dropdown.Trigger>
+                                <Dropdown.Content align="right">
+                                    <div className="p-2.5 border-b border-white/10 text-[11px] font-mono font-bold text-gray-400 uppercase">
+                                        Active Clinic Branch Location
+                                    </div>
+                                    <Dropdown.Link
+                                        href="#"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            router.post(route('switch-branch'), { branch_id: 'all' }, { preserveScroll: true });
+                                        }}
+                                        className="flex items-center gap-2 font-mono font-bold text-xs"
+                                    >
+                                        <span>📍 All Clinic Branches (HQ)</span>
+                                    </Dropdown.Link>
+                                    {(clinicBranches || []).map((b: any) => (
+                                        <Dropdown.Link
+                                            key={b.id}
+                                            href="#"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                router.post(route('switch-branch'), { branch_id: b.id }, { preserveScroll: true });
+                                            }}
+                                            className="flex items-center gap-2 font-mono text-xs"
+                                        >
+                                            <span>📍 {b.name} ({b.code})</span>
+                                        </Dropdown.Link>
+                                    ))}
+                                </Dropdown.Content>
+                            </Dropdown>
+
                             {/* Notification Bell Dropdown Widget */}
                             <Dropdown>
                                 <Dropdown.Trigger>
